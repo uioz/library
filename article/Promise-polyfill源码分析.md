@@ -357,6 +357,9 @@ if (cb === null) {
   self._deferreds = null;
 ```
 
-## 5. Node中的高性能异步
+## 5. 高性能异步
 
 这里使用了setImmediate而不是setTimeout(当然是在支持setImmediate环境下).
+
+> https://www.aliyun.com/jiaocheng/1068535.html
+
