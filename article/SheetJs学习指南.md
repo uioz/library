@@ -98,7 +98,7 @@ var desired_value = (desired_cell ? desired_cell.v : undefined);// 获取对应�
 
 __图片:工作簿的数据结构__
 
-![1548853228009](F:\library\article\assets\1548853228009.png)
+![1548853228009](./assets\1548853228009.png)
 
 一旦我们的Excel文件被解析那么这个Excel表中的所有内容都会被解析上面的这个对象.而且这整个过程是同步完成的.
 
@@ -148,7 +148,7 @@ __图片:工作簿的数据结构__
 
 __解析后单元格数据格式:__
 
-![1548774339329](F:\library\article\assets\1548774339329.png)
+![1548774339329](./assets\1548774339329.png)
 
 这个数据在Excel中保存在A1的位置上,文本类型,单元格内容为`xm`.
 
@@ -278,7 +278,7 @@ console.log(workSheet);
 
 __图片:二维数组结果__
 
-![1548857097733](F:\library\article\assets\1548857097733.png)
+![1548857097733](./assets\1548857097733.png)
 
 ```javascript
 const workSheet = 
@@ -295,7 +295,7 @@ console.log(workSheet);
 
 __图片:JSON效果__
 
-![1548857328315](F:\library\article\assets\1548857328315.png)
+![1548857328315](./assets\1548857328315.png)
 
 [详细文档地址](https://github.com/SheetJS/js-xlsx#utility-functions)
 
@@ -324,7 +324,7 @@ console.log(workSheet);
 
 __图片:二维数组结果__
 
-![1548857673280](F:\library\article\assets\1548857673280.png)
+![1548857673280](./assets\1548857673280.png)
 
 ```javascript
 const workSheet = 
@@ -350,7 +350,7 @@ console.log(workSheet);
 ```
 
 __图片:JSON效果__
-![1548857865584](F:\library\article\assets\1548857865584.png)
+![1548857865584](./assets\1548857865584.png)
 
 [详细文档地址](https://github.com/SheetJS/js-xlsx#utility-functions)
 
@@ -365,7 +365,7 @@ __图片:JSON效果__
 
 这里就不提供详细的用例了,可以转换的格式如下:
 
-![1548858135268](F:\library\article\assets\1548858135268.png)
+![1548858135268](./assets\1548858135268.png)
 
 [详细文档地址](https://github.com/SheetJS/js-xlsx#formulae-output)
 
