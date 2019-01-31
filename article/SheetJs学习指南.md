@@ -1,10 +1,10 @@
 # 简介
 
-SheetJs是前端操作Excel的最佳选择,而`js-xlsx`是它的社区版本.
+SheetJS是前端操作Excel以及类似的二维表的最佳选择之一,而`js-xlsx`是它的社区版本.
 
 `js-xlsx`将注意力集中到了数据转换和导出上,所以它支持相当多种类的数据解析和导出.不仅仅局限于支持xlsx格式.
 
-[支持的导入格式](https://github.com/SheetJS/js-xlsx#guessing-file-type)
+[支持的导入格式](https://github.com/SheetJS/js-xlsx#input-type)
 
 [支持的导出格式](https://github.com/SheetJS/js-xlsx#supported-output-formats)
 
@@ -84,7 +84,7 @@ const xlsx = require('xlsx');
 
 ```javascript
 // 先不要关心我们的workbook对象是从哪里来的
-var first_sheet_name = workbook.SheetNames[0]; // 获取工作簿中的工资表名字
+var first_sheet_name = workbook.SheetNames[0]; // 获取工作簿中的工作表名字
 var address_of_cell = 'A1'; // 提供一个引用样式(单元格下标)
 
 var worksheet = workbook.Sheets[first_sheet_name]; // 获取对应的工作表对象
@@ -107,7 +107,7 @@ __图片:工作簿的数据结构__
 上图中常用的键一共有两个:
 
 - `SheetNames`以字符串数组的形式保存了所有的工作表的名称
-- Sheets下的内容都是工作表,而键名就是`SheetNames`中的
+- Sheets下的内容都是工作表对象,而键名就是`SheetNames`中包含的名字
 
 而Excel的数据单位由小到大有如下排序如下:
 
@@ -121,15 +121,15 @@ __图片:工作簿的数据结构__
 
 **常见格式**如下:
 
-| 键   | 描述                                 |
-| ---- | ------------------------------------ |
-| v    | 源数据(未经处理的数据)               |
-| w    | 格式化后的文本(如果能够被格式化)     |
-| t    | 单元格类型(具体类型请看下方的表格)   |
-| r    | 解码后的富文本(如果可以被解码)       |
-| h    | 渲染成HTML格式的富文本(如果可以的话) |
-| c    | 单元格注释                           |
-| z    | 格式化成字符串的数值(如果需要的话)   |
+| 键   | 描述                                   |
+| ---- | -------------------------------------- |
+| v    | 源数据(未经处理的数据)                 |
+| w    | 格式化后的文本(如果能够被格式化)       |
+| t    | 单元格类型(具体类型请看下方的表格)     |
+| r    | 解码后的富文本(如果可以被解码)         |
+| h    | 渲染成HTML格式的富文本(如果可以被解码) |
+| c    | 单元格注释                             |
+| z    | 格式化成字符串的数值(如果需要的话)     |
 
 >  完整格式[链接](https://github.com/SheetJS/js-xlsx#cell-object)
 
@@ -165,7 +165,7 @@ const start = { c: 0, r: 0 };
 const end = { c: 1, r: 1 };
 ```
 
-上方地址对象对应的范围如下:
+上方地址对象对应的地址范围如下:
 
 ```javascript
 const range = 'A1:B2';
@@ -256,11 +256,11 @@ console.log(workBook);
 `js-xlsx`提供了多种方式来操作数据,这里提供最常见的几种操作:
 
 - 利用现有的数据结构创建工作表
-  - 二维数组
-  - JSON
+  - 二维数组作为数据源
+  - JSON作为数据源
 - 修改工作表数据
-  - 二维数组
-  - JSON
+  - 二维数组作为数据源
+  - JSON作为数据源
 
 ### 创建工作表
 
