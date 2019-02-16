@@ -1,4 +1,4 @@
-# 简介(题目自底向上学习Web数据操作)
+# 简介
 
 本篇文章主要探讨JavaScript中的数据操作.
 
@@ -9,6 +9,14 @@ JavaScript一直以来给人一种比较低能的感觉,例如无法读取系统
 但是很多人没有发现,实际上JavaScript以及在逐步增强这些功能,例如我们已经可以只在浏览器端进行读写文件了.
 
 我个人认为这些功能不流行的原因,除了需求较小外,兼容性,以及不利于理解的API甚至没有过多介绍的文章都在客观上造成了某些影响.
+
+# 起因
+
+N个月前我去新浪面试实习,我提到了原来我做过一个页面配合上传Excel可以完成一些功能.
+
+我的这番话勾起了面试官在实际编码中遇到了一些问题,就是如何不通过服务器来操作数据,我和她讨论了一番,最后不了了之了(当然也没过).
+
+N个月后实习被坑:joy:,成了无业游民闲来无事正好也好奇这个问题然后就研究了一下.
 
 # 涉及的内容
 
@@ -43,8 +51,8 @@ API名称以及对应的职责:
 | ---- | ---- |
 | URL  | 制造文件地址 |
 | FileReader | 读取文件的接口 |
-| Blob | 用于在JavaScript表示文件(本身不包含文件的内容) |
-| File | 用于表示文件对象(包含文件内容) |
+| Blob | 用于在JavaScript表示文件 |
+| File | 用于表示文件对象 |
 | ArrayBuffer | 表示Buffer(仅仅提供一片内存空间) |
 | TypedArray | 基于数组操作Buffer上的数据(操作的最小单位是数组元素) |
 | DataView | 基于字节操作Buffer上的数据 |
@@ -283,7 +291,7 @@ Blob对象还可以根据其他数据结构进行创建:
 
 > https://developer.mozilla.org/zh-CN/docs/Web/API/Blob/Blob
 
-乍一看Blob对象看似很鸡肋,不过在JavaScript中能装载数据还可以指定MIME类型,多半都是用于和外部进行交互.
+乍一看Blob对象看似很鸡肋,不过在JavaScript中能装载数据还可以指定MIME类型,这种情况多半都是用于和外部进行交互.
 
 回顾前面的内容,我们知道了如何创建一片内存中的区域,还知道了如何利用不同的工具来对这篇内存进行操作,最重要的一个用于描述文件Blob对象接受ArrayBuffer和TypedArray,那么还能玩出什么花样呢?
 
@@ -293,7 +301,7 @@ Blob对象还可以根据其他数据结构进行创建:
 >
 > https://developer.mozilla.org/zh-CN/docs/Web/API/File
 
-File对象用于描述文件,这个对象虽然可以利用构造函数自行创建,但是大多数情况下都是利用浏览器上的`<input>`元素拖拽API来提供的.
+File对象用于描述文件,这个对象虽然可以利用构造函数自行创建,但是大多数情况下都是利用浏览器上的`<input>`元素或者拖拽API来获取的.
 
 File对象继承Blob对象,所以继承了Blob对象上的原型方法和属性,和Blob纯粹表示文件不同,File更加接地气一点,他还拥有了我们操作系统上常见的一些特征:
 
@@ -306,8 +314,318 @@ File对象继承Blob对象,所以继承了Blob对象上的原型方法和属性,
 - 构造函数
   - [详细介绍](https://developer.mozilla.org/zh-CN/docs/Web/API/File/File)
 
+例子:
+
+```javascript
+        // 创建buffer
+        const buffer = new Int8Array(2);
+        console.log(buffer.byteLength); // 2
+        buffer[0] = 0;
+        buffer[1] = 127
+        console.log(buffer[0]); // 127
+        // 利用buffer创建一个file对象
+        const file = new File([buffer],'text.txt',{
+            type:'text/plain',
+            lastModified:Date.now()
+        });
+
+        // file继承blob所以可以使用slice方法,返回一个blob对象
+        const blob = file.slice(1,2,'text/plain');
+        console.log(blob.size); //1
+```
+
+File对象目前看来依然扮演者'载体'的角色,不过在将他交由其他的API的时候才是他真正发挥威力的地方.
+
 # FileReader
 
-# 这些API在其他API中应用
+FileReader一看名字我就有一种想喊`JavaScript`(浏览器端)永不为奴的冲动.前面铺垫了那么多终于可以看到真正可以实际利用的内容了.
 
-// TODO URL 对象可以使用在很多地方
+> `FileReader` 对象允许Web应用程序异步读取存储在用户计算机上的文件（或原始数据缓冲区）的内容，使用 [`File`](https://developer.mozilla.org/zh-CN/docs/Web/API/File) 或 [`Blob`](https://developer.mozilla.org/zh-CN/docs/Web/API/Blob) 对象指定要读取的文件或数据。
+>
+> https://developer.mozilla.org/zh-CN/docs/Web/API/FileReader
+
+FileReader和前面的所有提到内部不同的地方在于,这个API有事件,你可以使用`onXXX`和`addEventListener`进行监听.
+
+基本工作流程:
+
+1. 获取用户提供的文件对象(通过input或者拖拽)
+   1. 或者自己创建File或者(Blob)对象
+2. 新建一个FileReader()实例
+3. 监听对应的方法来获取读取内容完成后的回调
+4. 利用不同的方法读取文件内容
+   1. 读取为`fileReader.ArrayBuffer()`
+   2. 读取为DataURL`fileReader.readAsDataURL()`
+   3. 读取为字符串`fileReader.readAsText()`
+
+示例1读取计算机上的文件:
+
+```html
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>blob</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <!-- 建议选中一个文本 -->
+    <label for="file">读取文件<input id="file" type="file" ></label>
+    <script type="text/javascript">
+        document.getElementById('file').addEventListener('change',(event)=>{
+
+            const files = event.srcElement.files;
+
+            if(files.length === 0){
+                return console.log('没有选择任何内容');
+            }
+
+            const file = files[0];
+
+            console.log(file instanceof File); // true
+            console.log(file instanceof Blob); // true
+
+            const reader = new FileReader();
+
+            reader.addEventListener('abort',()=>console.log('读取中断时候触发'));
+            reader.addEventListener('error',()=>console.log('读取错误时候触发'));
+            reader.addEventListener('loadstart',()=>console.log('开始读取的时候触发'));
+            reader.addEventListener('loadend',()=>console.log('读取结束触发'));
+            reader.addEventListener('progress',()=>console.log('读取过程中触发'));
+
+            // 当内容读取完成后再load事件触发
+            reader.addEventListener('load',(event)=>{
+
+                // 输出文本文件的内容
+                console.log(event.target.result)
+
+            });
+            // 读取一个文本文件
+            reader.readAsText(file);
+
+        });
+    </script>
+</body>
+
+</html>
+```
+
+如果一切顺利你就可以从计算机上读取一个文件并且以文本的形式展现在了控制台中.
+
+而且不仅如此,利用:
+
+```javascript
+reader.readAsArrayBuffer(file)
+```
+
+我们可以读取任何类型的数据,然后再内存中进行修改,剩下的就差保存了.
+
+## FileReaderSync
+
+这个API是FileReader的同步版本,这意味着代码执行到读取的时候会等待文件的读取,所以这个API只能在workers里面使用,如果在主线程中调用它会阻塞用户界面的执行.
+
+由于是同步读取,所以没有回调掉必要存在,也就不需要监听事件了.
+
+> https://developer.mozilla.org/zh-CN/docs/Web/API/FileReaderSync
+
+# URL
+
+前面我们讨论完成了数据的读取,在FileReader中我们已经可以获取ArrayBuffer然后使用DateView和TypedArray就可以修改ArrayBuffer完成文件的修改,接下来我们旅行中的最后一程.
+
+> https://developer.mozilla.org/zh-CN/docs/Web/API/URL
+
+在JavaScript(浏览器端)中我们可以使用URL来创建一个URL对象:
+
+```javascript
+new URL('https://www.xxx.com?q=10')
+```
+
+他返回的对象包含如下的内容:
+
+```
+// 控制台
+new URL('https://www.xxx.com?q=10')
+
+URL
+hash: ""
+host: "www.xxx.com"
+hostname: "www.xxx.com"
+href: "https://www.xxx.com/?q=10"
+origin: "https://www.xxx.com"
+password: ""
+pathname: "/"
+port: ""
+protocol: "https:"
+search: "?q=10"
+searchParams: URLSearchParams {  }
+username: ""
+```
+
+可见该对象是一个工具对象用于帮助我们更加容易的处理URL.
+
+例子([来自MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/URL#%E4%BE%8B%E5%AD%90)):
+
+```javascript
+var a = new URL("/", "https://developer.mozilla.org"); // Creates a URL pointing to 'https://developer.mozilla.org/'
+var b = new URL("https://developer.mozilla.org");      // Creates a URL pointing to 'https://developer.mozilla.org'
+var c = new URL('en-US/docs', b);                      // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+var d = new URL('/en-US/docs', b);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+var f = new URL('/en-US/docs', d);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+var g = new URL('/en-US/docs', "https://developer.mozilla.org/fr-FR/toto");
+                                                       // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+var h = new URL('/en-US/docs', a);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+var i = new URL('/en-US/docs', '');                    // Raises a SYNTAX ERROR exception as '/en-US/docs' is not valid
+var j = new URL('/en-US/docs');                        // Raises a SYNTAX ERROR exception as 'about:blank/en-US/docs' is not valid
+var k = new URL('http://www.example.com', 'https://developers.mozilla.com');
+                                                       // Creates a URL pointing to 'https://www.example.com'
+var l = new URL('http://www.example.com', b);          // Creates a URL pointing to 'https://www.example.com'
+```
+
+实际上这和Node中的URL对象十分相似:
+
+```
+// 终端
+> Node
+> new URL('https://www.xxx.com/?q=10')
+URL {
+  href: 'https://www.xxx.com/?q=10',
+  origin: 'https://www.xxx.com',
+  protocol: 'https:',
+  username: '',
+  password: '',
+  host: 'www.xxx.com',
+  hostname: 'www.xxx.com',
+  port: '',
+  pathname: '/',
+  search: '?q=10',
+  searchParams: URLSearchParams { 'q' => '10' },
+  hash: '' }
+```
+
+它和我们讨论的文件下载有什么关系呢,在我们在浏览器中一切可以利用的资源都有唯一的标识符那就是URL.
+
+而我们自定义或者读取的文件需要通过URL对象创建一个指向我们定义资源的链接.
+
+那么URL对象上提供了两个静态方法:
+
+- [`URL.createObjectURL()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/createObjectURL) 创建根据URL或者Blob创建一个URL
+- [`URL.revokeObjectURL()`](https://developer.mozilla.org/zh-CN/docs/Web/API/URL/revokeObjectURL) 销毁之前已经创建的URL实例
+
+那么生成的这个URL,可以被用在任何使用URL的地方,在这个例子中我们读取一个图片,然后将它赋值给`img`标签的`src`属性,这会在你的浏览器中打开一张图片.
+
+```html
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>blob</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <label for="file">读取文件<input id="file" accept="image/*" type="file" ></label>
+    <img id="img" src="" alt="">
+    <script type="text/javascript">
+        document.getElementById('file').addEventListener('change',(event)=>{
+
+            const files = event.srcElement.files;
+
+            if(files.length === 0){
+                return console.log('没有选择任何内容');
+            }
+
+            const file = files[0];
+
+            document.getElementById('img').src = URL.createObjectURL(file);
+            
+        });
+    </script>
+</body>
+
+</html>
+```
+
+我们的图片被如下格式的URL所描述:
+
+```
+blob:http://127.0.0.1:5500/b285f19f-a4e2-48e7-b8c8-5eae11751593
+```
+
+## 导出文件实践
+
+利用浏览器在解析到MIME为`application/octet-stream`类型的内容是会自动提供下载的特性.
+
+我们有如下对策:
+
+1. 创建一个File对象修改他的type为`application/octet-stream`
+2. 使用这个File利用`URL.createObjectURL()`创建一个URL
+3. 重定向到这个URL,让浏览器自动弹出下载框
+
+```javascript
+const
+    buffer = new ArrayBuffer(1024),
+    array = new Int8Array(buffer);
+
+array.fill(1);
+
+const 
+    blob = new Blob(array),
+    file = new File([blob],'test.txt',{
+        lastModified:Date.now(),
+        type:'application/octet-stream'
+    });
+
+saveAs(file,'test.txt')
+
+const url = window.URL.createObjectURL(file);
+
+window.location.href = url;
+```
+
+上面这种方式简单粗:joy:,不过导出的文件你得修改文件名称.
+
+我们只需要稍稍利用利用a标签就可以优雅的完成这项任务:
+
+```javascript
+const
+    buffer = new ArrayBuffer(1024),
+    array = new Int8Array(buffer);
+
+array.fill(1);
+
+const 
+    blob = new Blob(array),
+    file = new File([blob],'test.txt',{
+    lastModified:Date.now(),
+        type:'text/plain;charset=utf-8'
+    });
+
+const 
+    url = window.URL.createObjectURL(file),
+    a = document.createElement('a');
+
+a.href = url;
+a.download = file.name; // see https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/a#%E5%B1%9E%E6%80%A7
+a.click();
+```
+
+大功告成,利用HTML5的API我们终于可以愉快的在WEB上操作数据啦!
+
+# MDN上几篇不错的指引
+
+分别是:
+
+- [在web应用程序中操作文件指南](https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications)
+- [JavaScript 类数组对象](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Typed_arrays)
+- [Base64的编码与解码](https://developer.mozilla.org/zh-CN/docs/Web/API/WindowBase64/Base64_encoding_and_decoding)
+
+# 参考
+
+> https://github.com/SheetJS/js-xlsx
+>
+> https://github.com/eligrey/FileSaver.js
+
