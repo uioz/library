@@ -237,6 +237,8 @@ int8.forEach((value)=>console.log(value));
 for (const elem of int8) {
 	console.log(elem);
 }
+
+Array.isArray(int8) // false 类数组而不是真的数组
 ```
 
 # Blob
@@ -342,7 +344,7 @@ FileReader一看名字我就有一种想喊`JavaScript`(浏览器端)永不为�
 >
 > https://developer.mozilla.org/zh-CN/docs/Web/API/FileReader
 
-FileReader和前面的所有提到内部不同的地方在于,这个API有事件,你可以使用`onXXX`和`addEventListener`进行监听.
+FileReader和前面的所提到的内容不同的地方在于,这个API有事件,你可以使用`onXXX`和`addEventListener`进行监听.
 
 基本工作流程:
 
@@ -410,7 +412,7 @@ FileReader和前面的所有提到内部不同的地方在于,这个API有事件
 </html>
 ```
 
-如果一切顺利你就可以从计算机上读取一个文件并且以文本的形式展现在了控制台中.
+如果一切顺利,你就可以从计算机上读取一个文件,并且以文本的形式展现在了控制台中.
 
 而且不仅如此,利用:
 
