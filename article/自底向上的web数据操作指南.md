@@ -557,7 +557,7 @@ blob:http://127.0.0.1:5500/b285f19f-a4e2-48e7-b8c8-5eae11751593
 
 ## 导出文件实践
 
-利用浏览器在解析到MIME为`application/octet-stream`类型的内容是会自动提供下载的特性.
+主要是利用浏览器在解析到MIME为`application/octet-stream`类型的内容会弹出下载对话框的特性.
 
 我们有如下对策:
 
