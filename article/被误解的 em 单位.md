@@ -39,7 +39,7 @@ div {
 
 ```css
 body {
-    font-size:20px;
+    font-size:40px;
 }
 div {
     font-size:20px;
@@ -49,7 +49,7 @@ div {
 
 ![firefox控制台](F:\library\article\assets\1559825939539.png)
 
-如果继承父元素的 `font-size` 的大小, `div` 的 `margin` 计算值是 `60px` 而不是 最后的 `20px` , 显然这个值是根据 `div` 本身的 `font-size` 来进行计算的.
+如果继承父元素的 `font-size` 的大小, `div` 的 `margin` 计算值是 `60px` 而不是 最后的 `40px` , 显然这个值是根据 `div` 本身的 `font-size` 来进行计算的.
 
 所以在此之前我们所了解的:
 
@@ -57,6 +57,6 @@ div {
 
 应该改成:
 
-> em 单位是相对于元素的 font-size 来计算的, 但是 font-size 会继承父元素的大小
+> em 单位是相对于元素的 font-size 来计算的, 但是不要忘记 font-size 会继承 `font-size` 大小
 
 而日常开发中 `em` 单位常见于字体单位的而不是其他属性的单位, 所以无法看出 `em` 实际上是相对于元素的 `font-size` , 因为 `font-size` 直接继承了父元素的大小, 所以 `em` 的误解也就一直存在了.
