@@ -108,3 +108,29 @@ div {
 
 ## 图片与文字垂直居中
 
+```html
+  <div style="background:#000">
+    <img src="http://temp.im/100x100/fff" alt="">
+  </div>
+```
+
+```css
+div {
+  line-height:200px;
+}
+
+img{
+  vertical-align:middle;
+}
+```
+
+作用原理, 父元素指定行高(子元素会继承), 在让 `<img>` 与父元素的基线进行对齐.
+
+**middle**: 作用机理:
+
+> 使元素的中部与父元素的基线加上父元素x-height（译注：[x高度](https://www.zhangxinxu.com/wordpress/2015/06/about-letter-x-of-css/)）的一半对齐。
+
+**实例**:
+
+> https://jsbin.com/puxutokusu/edit?html,css,output
+
