@@ -14,15 +14,10 @@
 
 当讨论的文字的时候, 最常见的有关 css 属性就是 `font-size` 了, 通常认为 `font-size` 指定的值就是文字的大小.
 
-实际上这个观点是错误的, 不过在开始解释前下方列举了后面会涉及到的几个名词:
-
-- em框
-- baseline
-
 想要证明 `font-size` 不等于 "字体大小" 实际上非常简单, 打开浏览器的开发者工具你就可以证明这点, 例如我们有如下的代码:
 
 ```html
-<body style="line-height:1">
+<body>
     <div style="font-size:25px">hello world</div>
 </body>
 ```
