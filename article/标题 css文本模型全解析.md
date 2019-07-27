@@ -60,17 +60,23 @@
 
 具体可以参考[这篇文章](https://juejin.im/post/59c9bc196fb9a00a402e0166), 从制作字体的角度解释了字体的渲染表现.
 
-### 有关 line-height 的猜想
-
-默认的 `line-height` 可能是由字体作者决定的, 具体请参考MDN的[这篇文章](https://developer.mozilla.org/zh-CN/docs/Web/CSS/line-height).
-
-这篇文章中提到:
-
-当 `line-height` 没有指定的时候取值为 `normal`, 作用效果如下方描写的那样:
+## line-height 的默认值
 
 > 取决于用户端。桌面浏览器（包括Firefox）使用默认值，约为`1.2`，这取决于元素的 `font-family`。
 
-"取决于子元素的 `font-family`", 这意味着默认的 `line-height` 是和字体有关的, 根据之前的提到的文章, [该文章](https://juejin.im/post/59c9bc196fb9a00a402e0166)中可以看到超出 `em框` 的部分实际上是由字体设计人员指定的, 那么是否意味着默认的 `line-height` 是从字体中获取的呢?
+不过根据我的测试, 字体设计上提供的超出 `em框` 的留白是会被 `line-height` 覆盖的.
+
+无 `line-height` 情况下 "微软雅黑" 字体行框高度为 26.4px, 一旦手动添加 `line-height:1.2` 后行框高度变为 24px.
+
+例子地址:
+
+> https://jsbin.com/dicaqocize/1/edit?html,css,js,output
+
+// TODO 研究有关 匿名盒子的内容
+
+> https://maxdesign.com.au/articles/anonymous-boxes/
+>
+> https://stackoverflow.com/questions/16823693/inline-anonymous-boxes
 
 ## baseline
 
@@ -120,7 +126,7 @@
 
   `line-height` - `font-size` 的差就是行间距(参考 `em框` 小节).
   一般来说行间距可以被平均分为两部分, 一部分在行前一部分在行后.
-  可以理解为 word 中的 "段前" "段后"的概念, 不过在 `css` 中只有 "端间距" 无法单独设置.
+  可以理解为 word 中的 "段前" "段后"的概念, 不过在 `css` 中只有 "行间距" 无法单独设置 "行前" 和 "行后".
 
 - 行内框
   含有行间距的外边缘就是行内框的大小. 对于 "非替换元素" 来说 `line-height` 大小就是 "行内框" 的高度.
@@ -140,7 +146,7 @@
 
 ## 建立框
 
-为了方便考虑, 我们这里只讨论一行或者多行中只有 "非替换元素" 和 "匿名文本" 的情况.
+为了方便考虑, 我们现在只讨论一行或者多行中只存在 "非替换元素" 和 "匿名文本" 的情况.
 
 我们知道 "`font-size` 确定了内容区域的高度(因为 `font-size` 确定了 `em框` 而多个 `em框` 构成内容区域).
 
@@ -166,7 +172,7 @@
 
 根据 "行内框" 计算规则 `line-height` 减去 `font-size` 除以 2 --> `(25-80)/2 = -27.5` 这些负值被添加到原有的 `em框` 上构成 "行内框".
 
-所以就造成了一种 "行内框" 比 "内容区域" 小的情况, 而且更加有趣的是 **"行内框" 的下边缘实际上会向上提升**, 因为大部分的文字在 `em框` 的中下部分:
+所以就造成了一种 "行内框" 比 "内容区域" 小的情况, 而且更加有趣的是 **"行内框" 的下边缘实际上会向上提升**, 因为大部分的文字都靠近 `em框` 的中下部分:
 
 ![1564142120696](C:\Users\zhao\Documents\library\article\assets\1564142120696.jpg)
 
@@ -178,9 +184,86 @@
 
 ![1564143040611](C:\Users\zhao\Documents\library\article\assets\1564143040611.jpg)
 
-# line-height
+## vertical-height
 
-# vercial-height
+> [CSS](https://developer.mozilla.org/en-US/docs/CSS) 的属性 **vertical-align** 用来指定行内元素（inline）或表格单元格（table-cell）元素的垂直对齐方式。
+
+`vertical-height` 是一个十分复杂的属性, 其中有几个属性的作用方式是和之前讨论的 "行框模型" 的关系是十分密切的, 包括以下几个属性:
+
+- top
+
+  行内框文本顶端与行框的顶端进行对齐
+
+- bottom
+
+  行内框的底部与行框的底部进行对齐
+
+- text-top
+
+  将元素行内框的顶端与父元素的内容区的顶端对齐
+
+- text-bottom
+
+  将元素行内框的底端与父元素的内容区的底端对齐
+
+- middle
+
+  将元素行内框的垂直中点与父元素基线上的 0.5ex 处对齐
+
+- super
+
+  将元素的内容区和行内框上移. 上移动的距离由用户代理实现.
+
+- sub
+
+  将元素的内容区和行内框下移. 下移动的距离由用户代理实现.
+
+接下来我们来使用 "top" 这个属性来研究一番, 我们在之前的例子中新增一些内容:
+
+```html
+  <p style="font-size:25px;line-height:25px">
+    hello world
+    <strong style="font-size:80px">Emmmm.</strong>
+    <span style="vertical-align:top">foobar</span>
+  </p>
+```
+
+你是否可以解释下方的渲染结果呢:
+
+![1564194377700](C:\Users\zhao\Documents\library\article\assets\1564194377700.png)
+
+我们新添加的 "内联元素" `<span>` 继承了父元素的 `font-size:25px;line-height:25px`, 由于 `<span>` 标签设置了 `vertical-align:top` 所以他的 "行内框" 顶部和我们的 "行框"(蓝色区域) 顶部进行了对齐.
+
+解析图:
+
+![1564195436029](C:\Users\zhao\Documents\library\article\assets\1564195436029.jpg)
+
+- 亮绿色 - 行框
+- 红色透明区域 - 行内框区域
+- 青色 - 基线
+- 蓝色 - 行内框与行框对齐高亮
+
+我们再在原有的基础上加点料:
+
+```html
+  <p style="font-size:25px;line-height:25px">
+    hello world
+    <strong style="font-size:80px">Emmmm.</strong>
+    <span style="font-size:40px;vertical-align:top;line-height:10px">foobar</span>
+  </p>
+```
+
+相信你可以解释下方的结果了吧:
+
+![1564195830449](C:\Users\zhao\Documents\library\article\assets\1564195830449.png)
+
+因为装载 "foobar" 文本的 `<span>` 标签, 被设置了一个较大的字体和一个极小的行高, 文本往往在 `em框` 靠下的位置而经过 "行内框" 生成后, 上下各自减去同样大小的数值, 导致计算完成的 "行内框" 的底部提升, 甚至超过了文字的基线.
+
+使用 `vertical-align:top` 让 `<span>` 的行内框的顶部与行框进行对齐, 导致部分超出 `<span>` 元素的 "行内框" 的文本超出 "行框".
+
+
+
+# line-height
 
 
 
