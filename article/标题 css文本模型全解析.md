@@ -4,6 +4,23 @@
 
 在写作本文章前原本打算只是复习一下 `line-height` 和 `vertical-height` 这两个属性而已, 结果发现掉进了一个大坑网上有很多篇文章看的我云里雾里的, 决定从最基础的地方开始进行探索, 这篇文章便是本次探索的一个记录吧.
 
+# 行内元素
+
+我们这里不会仔细的讨论 "行内元素", 只是为了后面的内容做铺垫, 这些内容可能需要你提前预习.
+
+## 定义
+
+## 分类
+
+- 替换元素
+- 非替换元素
+
+## 表现
+
+margin padding border 不会影响非替换元素的垂直高度
+
+> 参考 css权威指南 199
+
 # 字体
 
 我们先从字体开始, 因为文本布局的基本单位毫无疑问是由文字组成的:
@@ -66,17 +83,11 @@
 
 不过根据我的测试, 字体设计上提供的超出 `em框` 的留白是会被 `line-height` 覆盖的.
 
-无 `line-height` 情况下 "微软雅黑" 字体行框高度为 26.4px, 一旦手动添加 `line-height:1.2` 后行框高度变为 24px.
+固定 `font-size:20px` 且无 `line-height` 情况下 "微软雅黑" 字体行框高度为 26.4px, 一旦手动添加 `line-height:1.2` 后行框高度变为 24px.
 
 例子地址:
 
 > https://jsbin.com/dicaqocize/1/edit?html,css,js,output
-
-// TODO 研究有关 匿名盒子的内容
-
-> https://maxdesign.com.au/articles/anonymous-boxes/
->
-> https://stackoverflow.com/questions/16823693/inline-anonymous-boxes
 
 ## baseline
 
@@ -94,7 +105,7 @@
 
 ![1564113855163](C:\Users\zhao\Documents\library\article\assets\1564113855163.png)
 
-可以看到不同类型的字体实际上是按照了他们的基线进行对齐的, 由于这几种字体的基线都是 "小写英文字母的底边缘", 即使他们的默认行高不同但是通过基线对齐后它们在**视觉上形成了统一**.
+可以看到不同类型的字体实际上是按照了他们的基线进行对齐的, 由于这几种字体的基线都是 "小写英文字母x的底边缘", 即使他们的默认行高不同但是通过基线对齐后它们在**视觉上形成了统一**.
 
 但是一旦选中这些文字我们便察觉到了他们之间的差异:
 
@@ -142,7 +153,7 @@
 
 在一行文本中可能会存在各种因素影响着文本的显示, 例如上图中存在着多种字体的情况. 而且这张图片中还没有考虑同一行存在 `<img>` 这种替换元素的情况.
 
-不过复杂的设计实际上是为了满足复杂的需要.
+复杂的设计实际上是为了满足复杂的需要.
 
 ## 建立框
 
@@ -184,7 +195,7 @@
 
 ![1564143040611](C:\Users\zhao\Documents\library\article\assets\1564143040611.jpg)
 
-## vertical-height
+## vertical-height 实战
 
 > [CSS](https://developer.mozilla.org/en-US/docs/CSS) 的属性 **vertical-align** 用来指定行内元素（inline）或表格单元格（table-cell）元素的垂直对齐方式。
 
@@ -261,11 +272,67 @@
 
 使用 `vertical-align:top` 让 `<span>` 的行内框的顶部与行框进行对齐, 导致部分超出 `<span>` 元素的 "行内框" 的文本超出 "行框".
 
+## line-height 实战
 
+在之前的章节中我们知道了 `line-height` 的高度实际上就是 "行内框" 的高度. 如果设置了错误的 `line-height` 的高度可能会带来多行叠加的情况.
 
-# line-height
+当一行中含有不同大小字体的时候我们该如何指定一个良好的 `line-height` 的呢, 例如:
 
+```html
+  <p >Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    <strong style="font-size:50px;">big Text</strong>
+    dolorum inventore tempora, laboriosam esse a veritatis 
+    quae nihil mollitia
+  </p>
+```
 
+渲染的结果:
+
+![1564372422728](C:\Users\zhao\Documents\library\article\assets\1564372422728.png)
+
+问题所在的原因就是 "行内框" 的高度比 "内容区域" 小, 导致多出去的内容区域渲染的内容溢出. 解决的问题很简单**确保行内框要比内容区域大**就可以了.
+
+我们手动的给大号字体指定一个 `line-height` 其值要大于等于 `font-size`:
+
+```html
+  <p >Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    <strong style="font-size:50px;line-height:1em">big Text</strong>
+    dolorum inventore tempora, laboriosam esse a veritatis 
+    quae nihil mollitia
+  </p>
+```
+
+或者使用 `line-height` 的缩放因子:
+
+```html
+  <p style="line-height:1.5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    <strong style="font-size:50px">big Text</strong>
+    dolorum inventore tempora, laboriosam esse a veritatis 
+    quae nihil mollitia
+  </p>
+```
+
+由于 `line-height` 具有继承的特性所以 `<p>` 下的所有内容都继承了这个值, 而 "缩放因子" 是根据当前元素的 `font-size` 进行计算的, 所以大号字体会有一个线对其字号 1.5 倍大小的 `line-height` 值.
+
+## 留意 border
+
+不过这里依然存在一些问题, 我们知道 "行内元素" 可以设置 `padding` `margin` 和 `border`, 其中 `margin` 和 `padding` 在垂直方向的值是可以设置也存在但是不会影响到垂直方向的表现.
+
+`border` 和 `margin` 还有 `padding` 的表现一致, 但是有一点不同的是 `border` 大部分情况下都是由颜色的. 如果 `border` 在垂直方向的高度大于 "行间距" 的话, 这样又会造成重叠:
+
+![1564373841012](C:\Users\zhao\Documents\library\article\assets\1564373841012.png)
+
+因此在指定 `line-height` 的时候你还需要囊括 `boder ` 的高度这样才能避免重叠的问题:
+
+```html
+  <p style="line-height:1.5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    <strong style="font-size:50px;border-top:20px solid;line-height:calc(1.5em + 20px)">big Text</strong>
+    dolorum inventore tempora, laboriosam esse a veritatis 
+    quae nihil mollitia
+  </p>
+```
+
+使用 `calc` 可以进行自动计算, 当然手动指定一个高度也是可以的.
 
 # 引用&参考
 
