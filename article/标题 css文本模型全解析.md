@@ -8,7 +8,18 @@
 
 我们这里不会仔细的讨论 "行内元素", 只是为了后面的内容做铺垫, 这些内容可能需要你提前预习.
 
-## 定义
+你也可以直接跳过这章, 去阅读后面精彩的部分, 如果遇到了概念错误在返回来进行查阅.
+
+## 表现
+
+一个行内元素只占据它对应标签的边框所包含的空间。
+
+以下的这些元素都是行内元素:
+
+- [b](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/b), [big](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/big), [i](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/i), [small](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/small), [tt](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/tt)
+- [abbr](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/abbr), [acronym](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/acronym), [cite](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/cite), [code](https://developer.mozilla.org/zh-CN/HTML/Element/code), [dfn](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/dfn), [em](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/em), [kbd](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/kbd), [strong](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/strong), [samp](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/samp), [var](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/var)
+- [a](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/a), [bdo](https://developer.mozilla.org/zh-CN/HTML/Element/bdo), [br](https://developer.mozilla.org/zh-CN/HTML/Element/br), [img](https://developer.mozilla.org/zh-CN/HTML/Element/Img), [map](https://developer.mozilla.org/zh-CN/HTML/Element/map), [object](https://developer.mozilla.org/zh-CN/HTML/Element/object), [q](https://developer.mozilla.org/zh-CN/HTML/Element/q), [script](https://developer.mozilla.org/zh-CN/HTML/Element/Script), [span](https://developer.mozilla.org/zh-CN/HTML/Element/span), [sub](https://developer.mozilla.org/zh-CN/HTML/Element/sub), [sup](https://developer.mozilla.org/zh-CN/HTML/Element/sup)
+- [button](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/button), [input](https://developer.mozilla.org/zh-CN/HTML/Element/Input), [label](https://developer.mozilla.org/zh-CN/HTML/Element/label), [select](https://developer.mozilla.org/zh-CN/HTML/Element/select), [textarea](https://developer.mozilla.org/zh-CN/HTML/Element/textarea)
 
 ## 分类
 
@@ -43,7 +54,7 @@ margin padding border 不会影响非替换元素的垂直高度
 
 ![1564111940013](C:\Users\zhao\Documents\library\article\assets\1564111940013.png)
 
-上图中我们实际的字体大小是 "32px".
+上图中我们看到一个 `font-size:25px` 的元素却占据了 32.8px 的高度的空间.
 
 ## em框
 
@@ -51,7 +62,9 @@ margin padding border 不会影响非替换元素的垂直高度
 >
 > css权威指南(第三版)
 
-你设置的 `font-size` 实际上控制的是文字的 `em框` 而不是字体的本身的大小, 而 `em框` 与文本之间的间距是由字体的设计者决定的. 类似于田字格的效果.
+你设置的 `font-size` 实际上控制的是文字的 `em框` 而不是字体的本身的大小, 而 `em框` 与文本之间的间距是由字体的设计者决定的.
+
+`em框` 的概念就类似小学使用的田字格, 所有字体都相对于田字格进行书写.
 
 >https://stackoverflow.com/questions/20845711/what-is-a-fonts-em-box-em-unit-and-where-is-it-defined
 >
@@ -63,6 +76,8 @@ margin padding border 不会影响非替换元素的垂直高度
 
 没错实际上大部的字体都严格遵守了 `em框` 的大小限制, 当我们将 `line-height` 大小设置为 `font-size` 一样的时候:
 
+// TODO 修改例子
+
 ```html
 <body style="line-height:25px">
   <div style="font-size:25px">hello world</div>
@@ -73,13 +88,17 @@ margin padding border 不会影响非替换元素的垂直高度
 
 ![1564112718078](C:\Users\zhao\Documents\library\article\assets\1564112718078.jpg)
 
-那么多出去的高度是从哪里来的, 实际上字体作者可以指定相当多的参数, 其中就包括了字体的上下的空白空间.
+那么多出去的高度是从哪里来的?
+
+实际上字体作者有相当大的权力来控制字体,不仅可以让字体大小超过 `em框`, 还可以**指定字体的上下留白空间**.
 
 具体可以参考[这篇文章](https://juejin.im/post/59c9bc196fb9a00a402e0166), 从制作字体的角度解释了字体的渲染表现.
 
-## line-height 的默认值
+### line-height 的默认值
 
-> 取决于用户端。桌面浏览器（包括Firefox）使用默认值，约为`1.2`，这取决于元素的 `font-family`。
+在MDN上对于 `line-height` 有如下大致的描述:
+
+> 当 line-height 使用默认值的时候(这个值是 normal), 这个值约为 1.2(不同浏览器不同), 取决于元素的 `font-family`.
 
 不过根据我的测试, 字体设计上提供的超出 `em框` 的留白是会被 `line-height` 覆盖的.
 
@@ -91,7 +110,7 @@ margin padding border 不会影响非替换元素的垂直高度
 
 ## baseline
 
-"baseline" 被称为 "基线", 也是由字体作者定义的, 不过常见的文字基线是英文字母小写 "x"的底边缘.
+"baseline" 被称为 "基线", 也是由字体作者定义的, 不过常见的文字基线是该字体的**英文字母小写 "x"的底边缘**, 如果说 `em框` 是田字格, 那么 `baseline` 就是英语练习册上的 "四线三格", 指定了文字对齐的位置, 有如下的例子:
 
 ```html
 <body>
@@ -105,9 +124,9 @@ margin padding border 不会影响非替换元素的垂直高度
 
 ![1564113855163](C:\Users\zhao\Documents\library\article\assets\1564113855163.png)
 
-可以看到不同类型的字体实际上是按照了他们的基线进行对齐的, 由于这几种字体的基线都是 "小写英文字母x的底边缘", 即使他们的默认行高不同但是通过基线对齐后它们在**视觉上形成了统一**.
+我们指定了多种不同的字体, 由于这几种字体的基线都是 "**小写英文字母x的底边缘**", 即使他们的默认行高不同但是通过基线对齐后它们在**视觉上形成了统一**.
 
-但是一旦选中这些文字我们便察觉到了他们之间的差异:
+但是一旦选中这些文字便可以察觉它们之间的差异:
 
 ![1564127184124](C:\Users\zhao\Documents\library\article\assets\1564127184124.png)
 
