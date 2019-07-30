@@ -2,7 +2,9 @@
 
 # 前言
 
-在写作本文章前原本打算只是复习一下 `line-height` 和 `vertical-height` 这两个属性而已, 结果发现掉进了一个大坑网上有很多篇文章看的我云里雾里的, 决定从最基础的地方开始进行探索, 这篇文章便是本次探索的一个记录吧.
+在写作本文章前原本打算只是复习一下 `line-height` 和 `vertical-height` 这两个属性而已, 结果发现掉进了一个大坑网上有很多篇文章看的我云里雾里的, 最后决定还是从头来一遍吧, 这篇文章是这次的一个记录.
+
+这次的故事虽然时因为 `line-height` 和 `vertical-align` 这两个属性引起的, 但是实际上本篇文章中主要探讨的话题是 "文本是如何渲染", 虽然这两个属性与话题关联很大但是本文中不会过多的提及它们, 请确保熟悉它们.
 
 # 内联元素(行内元素)
 
@@ -18,7 +20,7 @@
 
 默认情况下，行内元素不会以新行开始，而块级元素会新起一行。
 
-以下的这些元素都是行内元素:
+常见的内联元素有:
 
 - [b](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/b), [big](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/big), [i](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/i), [small](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/small), [tt](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/tt)
 - [abbr](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/abbr), [acronym](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/acronym), [cite](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/cite), [code](https://developer.mozilla.org/zh-CN/HTML/Element/code), [dfn](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/dfn), [em](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/em), [kbd](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/kbd), [strong](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/strong), [samp](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/samp), [var](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/var)
@@ -83,7 +85,9 @@
 </body>
 ```
 
-所以文字的高度就是 `25px` 对不对, 但是这是错误的结论:
+惯性思维会让我们认为这个元素的大小就是 `25px` .
+
+哈哈!欢迎来到css世界:
 
 ![1564111940013](C:\Users\zhao\Documents\library\article\assets\1564111940013.png)
 
@@ -99,22 +103,12 @@
 
 `em框` 的概念就类似小学使用的田字格, 所有字体都相对于田字格进行书写.
 
->https://stackoverflow.com/questions/20845711/what-is-a-fonts-em-box-em-unit-and-where-is-it-defined
->
->https://en.wikipedia.org/wiki/Em_(typography)
->
->http://www.d.umn.edu/~lcarlson/csswork/inline/embox.html
-
 不过按照上面的理解, `font-size` 控制的是 `em框` 的大小, 按照这样的设计字体大小至少不会超过 "25px" 才对.
 
 没错实际上大部的字体都严格遵守了 `em框` 的大小限制, 当我们将 `line-height` 大小设置为 `font-size` 一样的时候:
 
-// TODO 修改例子
-
 ```html
-<body style="line-height:25px">
-  <div style="font-size:25px">hello world</div>
-</body>
+<div style="font-size:25px;line-height:25px">hello world</div>
 ```
 
 我们发现字体渲染大小都是小于或者等于 "25px" 的:
@@ -125,13 +119,15 @@
 
 实际上字体作者有相当大的权力来控制字体,不仅可以让字体大小超过 `em框`, 还可以**指定字体的上下留白空间**.
 
-具体可以参考[这篇文章](https://juejin.im/post/59c9bc196fb9a00a402e0166), 从制作字体的角度解释了字体的渲染表现.
+具体可以参考[这篇文章](https://juejin.im/post/59c9bc196fb9a00a402e0166), 从制作字体的角度解释了字体的渲染表现, 从而可以解释 "不同字体之间为什么差异这么大" 这个困扰着我们多年的问题.
 
 ### line-height 的默认值
 
 在MDN上对于 `line-height` 有如下大致的描述:
 
 > 当 line-height 使用默认值的时候(这个值是 normal), 这个值约为 1.2(不同浏览器不同), 取决于元素的 `font-family`.
+
+**注意**💥:以下的内容是我不严谨的猜测, 请不要盲目相信.
 
 不过根据我的测试, 字体设计上提供的超出 `em框` 的留白是会被 `line-height` 覆盖的.
 
@@ -157,17 +153,17 @@
 
 ![1564113855163](C:\Users\zhao\Documents\library\article\assets\1564113855163.png)
 
-我们指定了多种不同的字体, 由于这几种字体的基线都是 "**小写英文字母x的底边缘**", 即使他们的默认行高不同但是通过基线对齐后它们在**视觉上形成了统一**.
+我们指定了多种不同的字体, 由于这几种字体的基线都是 "**小写英文字母x的底边缘**", 即使他们的默认行高不同但是通过基线对齐后它们在**视觉上形成了统一**, 下面的这张图片可以揭示它们对齐的方式, 图片中绿色的线代表基线可能的位置:
+
+![1564475795098](C:\Users\zhao\Documents\library\article\assets\1564475795098.jpg)
 
 但是一旦选中这些文字便可以察觉它们之间的差异:
 
 ![1564127184124](C:\Users\zhao\Documents\library\article\assets\1564127184124.png)
 
-// TODO 增加一个基线描述图片
-
 # 行布局
 
-🔥🔥🔥💥💥大量术语警告.
+🔥🔥🔥💥💥前方大量术语警告.
 
 行布局实际上要比常提到的块布局复杂的多. 所以在了解行布局前我们需要了解几吨相关的术语, 当然如果你已经了解过了可以直接跳过.
 
@@ -181,7 +177,7 @@
 
 - 替换元素(replaced element)
   **内容展示**不受 `css` 控制的元素被称为 "替换元素", 例如 `<img> <video> <audio> <iframe> ...`.
-  这些元素都有一个特点, 虽然你可以控制其盒模型属性,例如: `width height...` 但是你无法操控其内部的渲染,例如: 你无法控制 `<img>` 显示图片的具体细节.
+  这些元素都有一个特点, 虽然你可以控制其盒模型属性,例如: `width height...` 但是你无法操控其内部的渲染,例如: 你无法控制 `<iframe>` 内部显示页面的具体细节.
 
 - 内容区
   多个连起来的`em框` 组成内容区.
@@ -225,7 +221,7 @@
 
 ![1564139218873](C:\Users\zhao\Documents\library\article\assets\1564139218873.png)
 
-此时我们在段落中填入一个 "异类":
+此时我们在段落中填入一个超大号的 `<strong>`:
 
 ```html
   <p style="font-size:25px;line-height:25px">
@@ -245,7 +241,9 @@
 
 ![1564140810221](C:\Users\zhao\Documents\library\article\assets\1564140810221.png)
 
- 计算完成 "行内框" 后的 `<strong>` 标签的基线掉出了 "行内框", 由于文本需要按照 "基线对齐" 所以和 "hello world" 文本进行基线对齐, 此时 `<strong>` 的 "行内框" 被整体上抬, 而 "行框" 是根据整行文本中 "行内框" 的最高值和最低值决定的, "hello world" 文本占据了最低值, 而最高值由 `<strong>` 标签占据, 所以 "行框" 的高度比 `line-height` 还要高.
+ 计算完成 "行内框" 后的 `<strong>` 标签的基线掉出了 "行内框", 由于文本需要按照 "基线对齐" 所以 `<strong>` 和 "hello world" 文本进行基线对齐, 不过计算完成后的 `<strong>` 的 "行内框" 被整体上抬甚至比基线还要高, 而 "行框" 是根据整行文本中 "行内框" 的最高值和最低值决定的, "hello world" 文本占据了最低值, 而最高值由 `<strong>` 标签占据, 所以 "行框" 的高度比 `line-height` 还要高.
+
+下面的这张图描述了这种渲染行为:
 
 ![1564143040611](C:\Users\zhao\Documents\library\article\assets\1564143040611.jpg)
 
@@ -282,6 +280,14 @@
 - sub
 
   将元素的内容区和行内框下移. 下移动的距离由用户代理实现.
+  
+- 百分比
+
+  相对于行高计算后在将值应用到基线上控制上下移动的距离.
+
+- 其他值
+
+  `px` `em` .... 等常见的 css 单位
 
 接下来我们来使用 "top" 这个属性来研究一番, 我们在之前的例子中新增一些内容:
 
@@ -327,8 +333,6 @@
 使用 `vertical-align:top` 让 `<span>` 的行内框的顶部与行框进行对齐, 导致部分超出 `<span>` 元素的 "行内框" 的文本超出 "行框".
 
 ## line-height 实战
-
-// TODO 简单讲述一下 line-height 属性
 
 在之前的章节中我们知道了 `line-height` 的高度实际上就是 "行内框" 的高度. 如果设置了错误的 `line-height` 的高度可能会带来多行叠加的情况.
 
@@ -467,12 +471,99 @@ img{
 
 ## inline-block
 
+当用户给某个元素的 `display` 设置为 `inline-block` 属性的时候他就创造出了一种介于 "内联元素" 和 "块级元素" 的混合产物. 这种 "inline-block" 的作用细节实际上和身为 "替换元素" 的 `<img>` 标签十分相似:
 
+> 它就像图像一样放在一个文本中, 实际上, 行内块元素会作为替换元素放在行中. 这说明, 行内块元素的底端默认地位于文本行的基线上, 而且内部没有分隔符.
+>
+> 在行内块元素内部, 会像块级元素一样设置内容的格式. 就像所有块级或行内替换元素一样, 行内块元素也有属性 `width` 和 `height`, 如果比周围内容高, 这些属性会使行高增加.
+>
+> -- css 权威指南(第三版)
+
+例如下面的代码我们给 `<span>` 设置了 `display:inline-block` 属性:
+
+```html
+  <style>
+    #test{
+      display:inline-block;
+      border:2px solid green;
+      width:6em;
+      margin:5px;
+      padding:5px;
+      color:blue;
+    }
+  </style>
+  <div>
+    helloworld helloworld helloworld <p id="test">emmmmmmm</p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci, iure, magnam! Quam autem tempora quidem ut. Doloremque luptatibus. Eaque!
+  </div>
+```
+
+这段代码的结果是:
+
+![1564480129553](C:\Users\zhao\Documents\library\article\assets\1564480129553.png)
+
+可以看到被标记为 `inline-block` 的元素的渲染和 "替换元素" 非常类似, 只有一个不同就是**垂直对齐方式是根据内部文本来进行对齐的**, 而不是 "替换元素" 的外边距的底边缘.
+
+正因此表现和 "替换元素" 一样当一行中的空间不够的时候他不会像 "行内框" 那样行尾断开进行换行, 而是跑到下一行来获取空间:
+
+![1564480718247](C:\Users\zhao\Documents\library\article\assets\1564480718247.png)
+
+不过请注意**`inline-block` 垂直对齐根据内部文本基线进行对齐**可以会造成意想不到的情况:
+
+```html
+<body>
+  hello world
+  <div style="display:inline-block;width:100px;height:100px;word-wrap:break-word;
+  background-color:red;color:#fff;">
+      <span>
+          HelloWorld HelloWorld Helloworld
+      </span>
+  </div>
+  <span >Hello World</span>
+</body>
+```
+
+渲染的结果:
+
+![1564481059062](C:\Users\zhao\Documents\library\article\assets\1564481059062.png)
+
+对齐是根据 `inline-block` 框中的第三个 "hello world" 文字的基线进行对齐的.
 
 # 引用&参考
 
-> https://www.cnblogs.com/youxin/p/3336854.html
+## em框
+
+> https://stackoverflow.com/questions/20845711/what-is-a-fonts-em-box-em-unit-and-where-is-it-defined
 >
-> https://juejin.im/post/59f5a49951882561a209bd37
+> https://en.wikipedia.org/wiki/Em_(typography)
 >
-> https://www.cnblogs.com/shiyou00/p/10690549.html
+> http://www.d.umn.edu/~lcarlson/csswork/inline/embox.html
+>
+> https://juejin.im/post/59c9bc196fb9a00a402e0166
+
+## 匿名盒子
+
+> https://maxdesign.com.au/articles/anonymous-boxes/
+>
+> https://stackoverflow.com/questions/16823693/inline-anonymous-boxes
+>
+> https://blog.csdn.net/ixygj197875/article/details/79338334
+>
+> https://www.cnblogs.com/chaoguo1234/archive/2013/03/03/2941718.html
+
+## line-height
+
+> https://developer.mozilla.org/zh-CN/docs/Web/CSS/line-height
+
+## vertical-align
+
+> https://developer.mozilla.org/zh-CN/docs/Web/CSS/vertical-align
+
+## 行内元素(内联元素)
+
+> https://developer.mozilla.org/zh-CN/docs/Web/HTML/Inline_elements
+
+## 其他
+
+> css 权威指南(第三版)
+>
+> [张鑫旭老师的免费视频课程](https://www.imooc.com/t/197450)
