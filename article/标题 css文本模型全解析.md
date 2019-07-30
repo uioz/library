@@ -163,6 +163,8 @@
 
 ![1564127184124](C:\Users\zhao\Documents\library\article\assets\1564127184124.png)
 
+// TODO 增加一个基线描述图片
+
 # 行布局
 
 🔥🔥🔥💥💥大量术语警告.
@@ -326,6 +328,8 @@
 
 ## line-height 实战
 
+// TODO 简单讲述一下 line-height 属性
+
 在之前的章节中我们知道了 `line-height` 的高度实际上就是 "行内框" 的高度. 如果设置了错误的 `line-height` 的高度可能会带来多行叠加的情况.
 
 当一行中含有不同大小字体的时候我们该如何指定一个良好的 `line-height` 的呢, 例如:
@@ -423,7 +427,47 @@
 
 默认情况下 `vertical-align` 的对齐方式是 "baseline"(基线) 对齐, 对于 "替换元素" 来说 "基线" 就是**内容区域的底边缘**, 所以 `<img>` 会和左右两侧的文字进行对齐, 因此我们可以看到 `<img>` 元素下方有留出空白, 实际上是因为对齐而被提升了.
 
-正因为 "基线" 对齐导致 `<img>` 的行内框被提升导致 "行框" 变大才从而间接的导致 "行框" 的高度增加变为了 32.4px 而不是图片的高度 30px.
+正因为 "基线" 对齐导致 `<img>` 的行内框被提升导致 "行框" 变大才从而间接的导致 "行框" 的高度增加变为了 32.4px 而不是图片的高度 30px, 如下图所示:
+
+![1564457747715](C:\Users\zhao\Documents\library\article\assets\1564457747715.jpg)
+
+- 红色区域 - 文字行内框区域
+- 蓝色区域 - 图片行内框区域
+- 绿色线 - 基线
+- 黑色框 - 行框
+
+"替换元素" 影响了行框的高度但是并不是通过修改父元素的 `line-height` 的完成的, 或者修改自身的 `line-height` 来完成的.
+
+`<img>` 这个 "替换元素" 与其他 "非替换元素" 没有什么不同, 它也会继承 `line-height` 也可以设置 `line-height`, 但是 `line-height` 不会影响到它们(svg会受到影响), 例如我们给 `<img>` 设置一个 100px 的 `line-height` 但是这不会影响到他的 "行内框" 的大小:
+
+```html
+  <body>
+      <p style="font-size:20px;line-height:1">hello <img src="http://temp.im/100x30" style="line-height:100px;"> world</p>
+  </body>
+```
+
+修改后的高度依然和之前的例子高度一致.
+
+不过 `line-height` 的值可以被 `vertical-align` 借用, 这个属性的百分比单位是基于 `line-height` 进行计算的, 根据计算的结果在当前的基线上进行上下移动:
+
+```css
+img{
+  line-height:100px;
+  vertical-align:50%;
+}
+```
+
+这会令 `<img>` 元素相对于基线向上移动 50px.
+
+对了, 不要忘记 "替换元素" 的内容区域是包括了 `margin` `padding` 和 `border` 的, 这点和 "非替换元素" 是有区别的:
+
+![1564458928495](C:\Users\zhao\Documents\library\article\assets\1564458928495.png)
+
+看到了吗垂直方向的高度增加了, 仔细观察你可以看到 `margin-top` 和行框之间存在着一小段距离.
+
+## inline-block
+
+
 
 # 引用&参考
 
