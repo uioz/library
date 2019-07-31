@@ -1,3 +1,5 @@
+# 前言
+
 如果说 css 作为前端开发的基本功, 那么 "选择器" 就是基础中的基础. 如果你在复写或者学习这些容易令人混淆的选择器, 那么你就来对地方了, 我的老伙计.
 
 本篇文章会直接了当的比较它们的特性, 帮助你快速的掌握它们:
@@ -25,6 +27,8 @@
 - 是一组兄弟元素
 - 是第一个(或者最后一个)元素
 
+``last-child` 在此不多赘述, 区别就是从后向前进行匹配.
+
 ![1564567333831](C:\Users\zhao\Documents\library\article\assets\1564567333831.jpg)
 
 ## first-of-type & last-of-type
@@ -37,6 +41,8 @@
 
 - 被前面的选择器匹配 此例中是 `p`
 - 是一组兄弟元素
+
+`last-of-type` 在此不多赘述, 区别就是从后向前进行匹配.
 
 ![1564568986091](C:\Users\zhao\Documents\library\article\assets\1564568986091.jpg)
 
@@ -97,7 +103,7 @@
 | nth-child(odd)  | 奇数元素                           |
 | nth-child(even) | 偶数元素                           |
 
-![1564572249317](C:\Users\zhao\Documents\library\article\assets\1564572249317.jpg)
+![	1564572249317](C:\Users\zhao\Documents\library\article\assets\1564572249317.jpg)
 
 不过不要忘记了 `nth-child` 匹配的依然是同一组兄弟元素, 不过有趣的是 `nth-child` 会利用选择器进行过滤, 但是应用样式的时候却不把样式应用到匹配的元素上:
 
