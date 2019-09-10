@@ -1,6 +1,8 @@
 # 前言
 
-Node.js 的官方网站上有一篇解释 Event loop 的[文章](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/#the-node-js-event-loop-timers-and-process-nexttick), 本来打算借用其他人的翻译的不过没有一篇是原汁原味的版本, 只好自己动手了.
+本篇文章翻译自 Node.js 官网的同名文章也算是经典老物了, 不过官网的文章也与时俱进随着 Node.js 的演化在修改, 这篇文章最后的编辑时间是 2019年9月10日请注意时效性, 地址在文章的最后有给出.
+
+首次翻译英语水平有限, 错误之处还请多多指教.
 
 # 什么是事件循环
 
@@ -10,7 +12,7 @@ Node.js 的官方网站上有一篇解释 Event loop 的[文章](https://nodejs.
 
 # 解析事件循环
 
-当 Node.js 启动的时候, 他会初始化事件循环, 处理输入的脚本内容 (或者进入 [REPL](https://nodejs.org/api/repl.html#repl_repl)), 脚本可能会调用异步接口, 设置定时器, 或者调用 `process.nextTick()`, 然后开始处理事件循环.
+当 Node.js 启动的时候, 他会初始化事件循环, 处理输入的脚本内容 (或者进入 [REPL](https://nodejs.org/api/repl.html#repl_repl)), 脚本可能会调用异步接口, 设置定时器, 或者调用 `process.nextTick()`, 然后开始处理事件循环(eventloop).
 
 下面的简图中展示了事件循环的操作流程:
 
@@ -35,11 +37,11 @@ Node.js 的官方网站上有一篇解释 Event loop 的[文章](https://nodejs.
    └───────────────────────┘
 ```
 
-> 每一个方框代表了事件循环中不同的阶段(事件循环会重复执行这些步骤).
+> 每一个方框代表了事件循环中不同的阶段(所有阶段执行完成算是一次事件循环).
 
 每一个阶段都有一个由回调组成的 FIFO 队列被用于执行. 虽然不同的队列执行方式不同, 总的来看, 当事件循环进入该阶段后会执行该阶段对应的操作, 然后调用对应的回调直到队列耗尽或者达到了回调执行上限. 在到达上述情况后事件循环进入下一阶段, 然后继续这样的流程.
 
-由于处理单个操作可能会产生新的操作以及在轮询阶段产生的新事件会被内核排队, 在轮询事件(poll events)的过程中轮询事件会被排队. 因此, 执行一个长耗时的回调可以在轮询阶段超出定时器的阈值.
+由于处理单个操作可能会产生新的操作以及在轮询阶段产生的新事件会被内核排队, 在轮询事件(poll events)的过程中轮询事件会被排队. 因此, 执行一个长耗时的回调会超出在轮询阶段设定的定时器的阈值.
 
 > *Windows and the Unix/Linux* 平台略有差别, 但是这不影响我们的讨论. 我们最关心的是 Node.js 实际执行的那部分也就是上面的内容.
 
@@ -58,7 +60,7 @@ Node 会在两次完整的事件循环间检查是否存在 I/O 操作和或者 
 
 ## timer
 
-timer(计时器) 指定了运行回调的阈值时间, 而不是人们所想的执行时间. 定时器回调将会在指定的时间到达后尽快的执行, 不过 timer 的执行会受到操作系统调度和其他回调执行的影响被延后.
+timer(计时器) 指定了执行给定回调的阈值时间, 而不是人们所想的准确执行时间. 定时器回调将会在指定的时间到达后尽快的执行, 不过 timer 的执行会受到操作系统调度和其他回调执行的影响被延后.
 
 > 从技术上讲, 决定是否执行 timer 回调是在轮询阶段控制的, 在 timer 阶段才会执行这些回调.
 
@@ -102,23 +104,23 @@ someAsyncOperation(() => {
 
 ## poll
 
-在这个阶段中主要完成两个功能:
+事件轮询阶段主要有两大功能:
 
-1. 计算被阻塞和轮询 I/O 花费的时间, 然后
+1. 计算需要阻塞多长时间, 并且进行I/O轮询, 然后
 2. 处理轮询队列中的事件
 
 当事件轮询到了 poll 阶段的时候发现没有计时器到达阈值, 此时会发生两种情况:
 
-1. 如果轮询队列中有内容, 事件循环会遍历轮询队列然后逐个执行内部的回调, 直到队列清空或接近轮询阶段的回调执行上限(上限取决于操作系统).
+1. 如果轮询队列中有内容, 事件循环会遍历轮询队列然后同步调用其中的回掉, 直到队列清空或接近轮询阶段的回调执行上限(上限取决于操作系统).
 2. 如果轮询队列为空, 此时
    - 如果存在 `setImmediate()` 任务, 事件循环会结束轮询阶段直接跳入 check 阶段去执行那些 `setImmediate()` 任务.
-   - 如果没有需要处理的 `setImmediate()` 任务, 事件循环会在轮询阶段等待新的任务(idle 阶段)被添加到轮询队列中, 然后立即处理这些添加进来的任务.
+   - 如果没有需要处理的 `setImmediate()` 任务, 事件循环会在轮询阶段等待新的任务被添加到轮询队列中, 然后立即处理这些添加进来的任务.
 
-轮询队列为空后, 事件循环将检查已达到时间阈值的计时器. 如果一个或者多个计时器到达阈值, 事件循环会移动到 timer 阶段然后执行那些计时器回调.
+轮询队列为空后, 事件循环将检查已达到时间阈值的计时器. 如果有计时器到达阈值, 事件循环会移动到 timer 阶段然后执行那些计时器回调.
 
 ## check
 
-这个阶段允许在轮询阶段完成后执行回调. 如果轮询阶段进入等待(idle 阶段), 并且有被 `setImmediate()` 设定的回调, 那么事件循环有可能会移动到 check 阶段而不是继续在轮询阶段等待.
+这个阶段允许在轮询阶段完成后执行回调. 如果轮询阶段进入等待, 并且有被 `setImmediate()` 设定的回调, 那么事件循环有可能会移动到 check 阶段而不是继续在轮询阶段等待.
 
 `setImmediate()` 实际上是一个特殊的计时器, 在事件循环的一个单独阶段中执行. 它通过 libuv API 在轮询阶段结束后执行由 `setImmediate()` 设定的回调.
 
@@ -130,9 +132,9 @@ someAsyncOperation(() => {
 
 # `setImmediate()` vs `setTimeout()`
 
-`setImmediate()` 很像 `setTimeout()`, 但是行为不同这取决于调用方式.
+`setImmediate()`  和 `setTimeout()` 很像, 但根据调用时机的差异它们的行为方式有所区别.
 
-- `setImmediate()` 被设计在当前的事件轮询阶段结束后执行脚本一次.
+- `setImmediate()` 被设计在当前的事件轮询阶段(poll phase)结束后执行脚本一次.
 - `setTimeout()` 借助于设定阈值(毫秒)规划脚本的执行.
 
 执行计时器的顺序将根据调用它们的上下文而有所不同. 如果两者都在主模块中运行, 执行的时机会受到进程性能的影响(机器上的其他程序会影响到进程的性能).
@@ -160,7 +162,7 @@ immediate
 timeout
 ```
 
-**译者说明**: 如果性能足够, 轮询阶段还未到达 `setTimeout` 的 0 ms, 就已经检测到了 `setImmediate` 添加的脚本, 所以直接进入 check 阶段, 等到第二轮事件循环 `setTimeout` 才会在轮询阶段被检测到.
+**译者说明**: 在脚本执行首次执行完成后, `setImmediate` 和 `setTimeout` 被添加到了事件循环中. 在第二轮事件循环中如果进程性能一般已经到达 timer 的阈值了就会在 timer 阶段执行定时器任务, 随后执行 `setImmediate` 设定的任务. 如果线程性能足够就会因为不够计时器阈值跳过 timer 阶段去执行 `setImmediate` 设定的任务.
 
 但是如果你将这两个计时器移动到 I/O 循环中, `setImmediate` 始终会第一个执行:
 
@@ -187,6 +189,8 @@ $ node timeout_vs_immediate.js
 immediate
 timeout
 ```
+
+**译者说明**: 文件操作是 I/O操作实在 poll 阶段执行的, 回调执行完成后 poll 队列是空着的, 此时 timer 已经在 poll 阶段被设定完成(timer 阶段执行), 此时存在 `setImmediate`  任务所以直接进入到了 check 阶段.
 
 使用 `setImmediate`  的优点是始终在定时器前执行(在 I/O循环中), 而不管设置了多少个定时器.
 
@@ -217,7 +221,7 @@ function apiCall(arg, callback) {
 
 这段代码会对参数进行检查当类型错误会抛出 error. `process.nextTick()` 在最近的更新中允许传入参数, 然后将参数传入到回调中而不必嵌套一个函数来包装实现类似的功能.
 
-上段代码中我们会向用户通知错误, 但是只有用户的代码执行完成后这个错误才会被执行.  借助于 `process.nextTick()` 我们可以确保 `apiCall()` 调用的 `callback` 永远在当前用户代码执行完成之后以及在事件循环进入下一阶段前执行代码. 为了达到这一点, JS 调用栈允许展开然后立即执行那些给定的回调, 这样做允许用户通过  `process.nextTick` 创建递归的代码但是不会造成 V8 引擎的栈溢出错误 `RangeError: Maximum call stack size exceeded from v8`.
+上段代码中我们会向用户通知错误, 但是只有用户的代码执行完成后这个错误才会被执行.  借助于 `process.nextTick()` 我们可以确保 `apiCall()` 调用的 `callback` 永远在当前用户代码执行完成之后以及在事件循环进入下一阶段前执行代码. 为了达到这一点, JS 调用栈允许展开后立即执行那些给定的回调, 这样做允许用户通过  `process.nextTick` 创建递归的代码但是不会造成 V8 引擎的栈溢出错误 `RangeError: Maximum call stack size exceeded from v8`.
 
 > 水平有限, 原文如下:
 >
@@ -331,7 +335,7 @@ myEmitter.on('event', () => {
 });
 ```
 
-你无法在构造函数中立即触发事件, 因为对应的事件监听器还未挂载. 如果在构造函数内容你可以通过 `process.nextTick()` 来触发事件, 此时它就可以正常工作了:
+你无法在构造函数中立即触发事件, 因为对应的事件监听器还未挂载. 通过使用 `process.nextTick()` 可以在构造函数执行完成后在触发事件, 就可以实现我们的目标了:
 
 ```javascript
 const EventEmitter = require('events');
@@ -353,3 +357,14 @@ myEmitter.on('event', () => {
 });
 ```
 
+# 参考
+
+> [The Node.js Event Loop, Timers, and process.nextTick()](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/#process-nexttick-vs-setimmediate)
+
+> [由setTimeout和setImmediate执行顺序的随机性窥探Node的事件循环机制](https://segmentfault.com/a/1190000013102056)
+
+> [Node探秘之事件循环（2）--setTimeout/setImmediate/process.nextTick的差别](https://www.jianshu.com/p/837b584e1bdd)
+
+> [Node 定时器详解](http://www.ruanyifeng.com/blog/2018/02/node-event-loop.html)
+
+> [nodejs的eventloop，timers和process.nextTick()【译】](https://www.jianshu.com/p/ac64af22d775)
