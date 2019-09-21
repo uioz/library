@@ -27,7 +27,7 @@
 - 是一组兄弟元素
 - 是第一个(或者最后一个)元素
 
-``last-child` 在此不多赘述, 区别就是从后向前进行匹配.
+`last-child` 在此不多赘述, 区别就是从后向前进行匹配.
 
 ![1564567333831](C:\Users\zhao\Documents\library\article\assets\1564567333831.jpg)
 
@@ -103,9 +103,13 @@
 | nth-child(odd)  | 奇数元素                           |
 | nth-child(even) | 偶数元素                           |
 
-![	1564572249317](C:\Users\zhao\Documents\library\article\assets\1564572249317.jpg)
+在这个例子中展示了 `nth-child` 的几种常见的匹配规则, 包括不会匹配到任何内容的 `0n`:
 
-不过不要忘记了 `nth-child` 匹配的依然是同一组兄弟元素, 不过有趣的是 `nth-child` 会利用选择器进行过滤, 但是应用样式的时候却不把样式应用到匹配的元素上:
+![](C:\Users\zhao\Documents\library\article\assets\1564572249317.jpg)
+
+`nth-child` 在样式的应用上比较特殊, 在下面的这个例子中 `div` 作为非 `p` 元素是不会被 `p:nth-child` 匹配到的. 因此 `div` 打破了 `p` 元素的连续性, 按照常理来说在 `div` 后的 `p` 元素应该重新开始匹配 `第四行` 才会被应用样式, 但是我们看到的却不是这样 `div` 后的 `p` 被匹配到了.
+
+如果无视元素的名称的差异, 含有 `第三行` 的 `p` 标签确实是 2 的倍数, 也就是说 **`nth-child` 会统计所有相邻的兄弟元素而无视选择器, 而应用样式的时候会使用选择器进行过滤.**:
 
 ![1564573844836](C:\Users\zhao\Documents\library\article\assets\1564573844836.jpg)
 
