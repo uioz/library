@@ -1,8 +1,10 @@
 # 前言
 
-本篇文章翻译自 Node.js 官网的同名文章也算是经典老物了, 不过官网的文章也与时俱进随着 Node.js 的演化在修改, 这篇文章最后的编辑时间是 2019年9月10日请注意时效性, 地址在文章的最后有给出.
+本篇文章翻译自 Node.js 官网的同名文章也算是经典老物了, 不过官网的文章也随着 Node.js 的演化在修改, 这篇文章最后的编辑时间是 2019年9月10日请注意时效性, 地址在文章的最后有给出.
 
 首次翻译英语水平有限, 错误之处还请多多指教.
+
+**注意**: 这里描述的事件循环的工作机制是 Node11 后的工作机制和之前的版本不同, 详情可以查看[这篇文章](https://zhuanlan.zhihu.com/p/54951550).
 
 # 什么是事件循环
 
@@ -278,9 +280,9 @@ server.on('listening', () => {});
 
 # `process.nextTick()` vs `setImmediate()`
 
-对于用户而言我们有两个类似的功能函数, 但是它们的命名令人费解.
+对于使用者来说这两个接口的功能是类似的, 但是它们的名称却令人难以琢磨.
 
-- `process.nextTick()` 在事件循环的任意阶段中集中触发
+- `process.nextTick()` 在事件循环的某个阶段中全部执行
 - `setImmediate()` 在事件循环的随后的迭代中触发
 
 > 原文:
@@ -288,11 +290,6 @@ server.on('listening', () => {});
 > - `process.nextTick()` fires immediately on the same phase
 > - `setImmediate()` fires on the following iteration or 'tick' of the event loop
 >
-> 额外说明:
->
-> nextTick 指的是时钟上的下一个嘀嗒, 因为时间循环被比喻为时钟的循环.
->
-> 而 immediate 指的是立即, 马上的含义.
 
 从本质上看, 它们应该交换名称. `process.nextTick()` 从调用到出发所花费的时间比 `setImmediate()` 还要短, 但是这个坑已经被埋了太久了很难再被修复了. 如果要是修改命名会让 npm 上的大部分包挂掉. 随着 npm 上的包越来越多尝试修复的代价也越来越高. 虽然命名有问题, 但是也无法修改了.
 
