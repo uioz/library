@@ -121,13 +121,13 @@
 
 通过给容器元素添加声明后我们可以编写接下来的布局了.
 
-## 布局轨道
+# 布局轨道
 
 ### 显式轨道
 
 一个被声明为网格的元素, 很难直接用于布局, 在大部分的情况下我们需要为其设置轨道, 用于容纳子元素.
 
-就像我们第一节中展示的 3*3 布局一样, 图片中的布局不是由子元素声明构成的而是由父元素声明的:
+就像我们第一节中展示的 3*3 布局一样, 图片中的网格状的布局不是因为元素的声明而形成的, 而是由父元素通过声明轨道而形成的:
 
 ![1572767045201](./assets\1572767045201.png)
 
@@ -151,7 +151,7 @@ grid-template-rows:200px 200px 200px; /* 行轨道数 */
 
 实际上 `fr`单位的工作机制和 `flex` 布局中的缩放因子是类似的.
 
-在这个例子中 容器的列轨道被分为了 4 列, 其中第一列元素占据了 2 个空间, 第二个以及第三个元素各占据 1 个空间的大小:
+在这个例子中容器的列轨道被分为了 4 列, 其中第一列元素占据了 2 个空间, 第二个以及第三个元素各占据 1 个空间的大小:
 
 ```css
 .wrapper {
@@ -185,7 +185,73 @@ grid-template-rows:200px 200px 200px; /* 行轨道数 */
 - `grid-auto-rows`
 - `grid-auto-columns`
 
-来定义隐式轨道
+来定义隐式轨道, 这里我们使用 `grid-auto-rows` 来举例, 通过下列代码我我们声明了一个 2 * 1 的网格布局:
+
+```css
+.wrapper{
+  display:grid;
+  grid-gap:10px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows:100px;
+}
+```
+
+但是对应的子元素却有四个:
+
+```html
+<div class="wrapper">
+  <p>a</p>
+  <p>b</p>
+  <p>c</p>
+  <p>d</p>
+</div>
+```
+
+那么第二行的 c 和 d 元素所在的轨道是没有指定高度的, 那么网格会创建隐式轨道去存放这些溢出的元素.
+
+![1574819509926](C:\Users\zhao\Documents\library\article\assets\1574819509926.png)
+
+`grid-auto-rows` 的默认值是 `auto` 它控制了隐式轨道行的高度, 现在为其添加一个固定值.
+
+```css
+.wrapper{
+  display:grid;
+  grid-gap:10px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows:100px;
+  grid-auto-rows:50px;
+}
+```
+
+然后在添加几个子元素:
+
+```html
+  <div class="wrapper">
+    <p>a</p>
+    <p>b</p>
+    <p>c</p>
+    <p>d</p>
+    <p>f</p>
+    <p>g</p>
+  </div>
+```
+
+我们可以看到新的隐式轨道的高度都是固定值 50px 了, 当然这两个属性可以设置为其他属性, 这里就不再展开了.
+
+![1574820737750](C:\Users\zhao\Documents\library\article\assets\1574820737750.png)
+
+### 轨道单位
+
+#### 数量单位 repeat
+
+#### 大小单位 minmax
+
+# 新的关键字
+
+- flex
+- max-content
+- min-content
+- fit-content
 
 # 网格布局
 
