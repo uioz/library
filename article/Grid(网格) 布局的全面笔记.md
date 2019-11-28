@@ -236,7 +236,7 @@ grid-template-rows:200px 200px 200px; /* 行轨道数 */
   </div>
 ```
 
-我们可以看到新的隐式轨道的高度都是固定值 50px 了, 当然这两个属性可以设置为其他属性, 这里就不再展开了.
+我们可以看到新的隐式轨道的高度都是固定值 50px 了, 当然这两个属性可以设置为其他属性值, 这里就不再展开了.
 
 ![1574820737750](C:\Users\zhao\Documents\library\article\assets\1574820737750.png)
 
@@ -244,7 +244,56 @@ grid-template-rows:200px 200px 200px; /* 行轨道数 */
 
 #### 数量单位 repeat
 
+`repeat` 是用于简化轨道编写的一个属性, 例如我们要定义三个轨道, 利用我们之前的写法, 定义三列轨道代码如下:
+
+```css
+grid-template-columns: 1fr 1fr 1fr;
+```
+
+使用 `repeat` 可以表示为:
+
+```css
+grid-template-columns: repeat(3, 1fr);
+```
+
+它还可以用于表示轨道数量的一部分:
+
+```css
+grid-template-columns: 20px repeat(3, 1fr) 20px;
+/* 等同于 */
+grid-template-columns: 20px 1fr 1fr 1fr 20px;
+```
+
+在 `repeat` 后续的参数还可以用于重复轨道模式:
+
+```css
+grid-template-columns: repeat(2, 1fr 2fr);
+/* 等同于 */
+grid-template-columns: 1fr 2fr 1fr 2fr;
+/* 另外一个例子 */
+grid-template-columns: repeat(2, 1fr 2fr 3fr);
+/* 等同于 */
+grid-template-columns: 1fr 2fr 3fr 1fr 2fr 3fr;
+```
+
 #### 大小单位 minmax
+
+`minmax` 单位用于指定轨道的 "高度" 以及 "宽度", 如同它的名字一样, `minmax` 中包含了两个值:
+
+- min 最小值
+- max 最大值
+
+就拿最常用的行高来将, `minmax` 单位可以同时指定行轨道的 "最小值" 和 "最大值":
+
+```css
+/* 轨道行内的内容高度低于 100px 的时候, 轨道高度为最小值 100px */
+/* 轨道行内的内容高度高于 200px 的时候, 轨道高度为最大值 200px */
+grid-auto-rows: minmax(100px, 200px);
+
+/* 轨道行内的内容高度低于 100px 的时候, 轨道高度为最小值 100px */
+/* 轨道行内的内容高度高于 100px 的时候, 轨道高度会扩展到可以容纳最大元素的高度 */
+grid-auto-rows: minmax(100px, auto);
+```
 
 # 新的关键字
 
@@ -258,6 +307,10 @@ grid-template-rows:200px 200px 200px; /* 行轨道数 */
 ## 线布局
 
 线布局的概念非常简单, 在第一节中我们已经讨论了过了它, 在这里我们来详细的讨论一下他的其他的工作特性.
+
+一个网格中的区域我们称为 "网格单元", 那么如何确定一个 "网格单元" 在网格中的位置于大小呢?
+
+在线布局中我们通过 "网格单元" 的四条边相对网格来进行定位, 网格布局中提供了我们一组相关的属性:
 
 ```css
 .A {
