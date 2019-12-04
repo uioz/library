@@ -35,10 +35,10 @@
 
 ```css
 .A {
-   grid-column-start: 1; /* 第一行开始 */
-   grid-column-end: 2; /* 第二行结束 */
-   grid-row-start: 1; /* 第一列开始 */
-   grid-row-end: 4; /* 第四列结束 */
+   grid-column-start: 1; /* 第一列开始 */
+   grid-column-end: 2; /* 第二列结束 */
+   grid-row-start: 1; /* 第一行开始 */
+   grid-row-end: 4; /* 第四行结束 */
 }
 .B {
    grid-column-start: 3;
@@ -308,22 +308,144 @@ grid-auto-rows: minmax(100px, auto);
 
 线布局的概念非常简单, 在第一节中我们已经讨论了过了它, 在这里我们来详细的讨论一下他的其他的工作特性.
 
-一个网格中的区域我们称为 "网格单元", 那么如何确定一个 "网格单元" 在网格中的位置于大小呢?
+"网格单元" 是网格布局中的基本单位一个 3*3 的网格中存在 9 个网格单元, 而多个 "网格单元" 构成 "网格区域", 那么让多个网格单元变为网格区域呢?
 
-在线布局中我们通过 "网格单元" 的四条边相对网格来进行定位, 网格布局中提供了我们一组相关的属性:
+在网格布局中我们定义的是轨道, 而轨道两侧的内容就是线, 借用之前的一张描述 3*3 轨道图片:
+
+![grid](./assets\grid.jpg)
+
+我们看到 3行或者3列轨道会存在四条线, 这些线从1开始按行和列编号, 所以 "线" 也被称为 "编号线", 通过网格区域四条边缘线我们就可以进行定位一片区域, 网格布局中提供了我们一组相关的属性:
 
 ```css
-.A {
-   grid-column-start: 1; /* 第一行开始 */
-   grid-column-end: 2; /* 第二行结束 */
-   grid-row-start: 1; /* 第一列开始 */
-   grid-row-end: 4; /* 第四列结束 */
+p:first-child{
+   grid-column-start: 1; /* 第一列开始 */
+   grid-column-end: 2; /* 第二列结束 */
+   grid-row-start: 1; /* 第一行开始 */
+   grid-row-end: 4; /* 第四行结束 */
+}
+
+p{
+  padding:10px;
+  background:aqua;
+}
+
+.wrapper{
+  display:grid;
+  grid-gap:5px;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+}
+
+*{
+  margin:0;
 }
 ```
 
+```html
+  <div class="wrapper">
+    <p>1</p>
+    <p>2</p>
+    <p>3</p>
+    <p>4</p>
+    <p>5</p>
+    <p>6</p>
+    <p>7</p>
+  </div>
+```
 
+结果:
 
-## 缩写
+![1575423817939](./assets\1575423817939.png)
+
+### 反方向计数
+
+### 缩写
+
+首先使用编号线定位的时候, 我们指定了线的开始, 可以不指定结束, 这种情况下编号线会自动定位在下一行或者下一列用于结束(下一列的概念取决于书写方向)这种行为被称为 "默认跨度":
+
+```css
+/* 只定义开始 */
+grid-column-start: 1;
+grid-row-start: 1;
+
+/* 等同于 */
+grid-column-start: 1;
+grid-column-end: 2;
+grid-row-start: 1;
+grid-row-end: 2;
+
+/* 只定义开始 */
+grid-column-start: 3;
+grid-row-start: 3;
+
+/* 等同于 */
+grid-column-start: 2;
+grid-column-end: 3;
+grid-row-start: 3;
+grid-row-end: 4;
+```
+
+#### `grid-column` `grid-row` 缩写属性
+
+`grid-column-start` 和 `grid-column-end` 属性可以合并为 `grid-column`, `grid-row-start` 和 `grid-row-end` 则合并为 `grid-row`.
+
+例如:
+
+```css
+/* 完整写法 */
+grid-column-start: 1;
+grid-column-end: 2;
+
+/* 缩写 */
+grid-column: 1 / 2;
+
+/* 完整写法 */
+grid-column-start: 2;
+grid-column-end: 3;
+
+/* 缩写 */
+grid-column: 2 / 3;
+```
+
+`grid-row` 同理这里我们就不在展开了.
+
+利用缩写属性的同时我们还可以继续使用默认跨度:
+
+```css
+/* 只定义行开始 */
+grid-column-start: 1;
+
+/* 等同于 "缩写属性" + "默认跨度" */
+grid-column: 1;
+
+/* 只定义列开始 */
+grid-column-row: 2;
+
+/* 等同于 "缩写属性" + "默认跨度" */
+grid-row: 1;
+```
+
+#### `grid-area` 属性
+
+`grid-area` 属性更进一步允许将四个属性合并到一个属性中完成, 这四个属性的顺序如下:
+
+- grid-row-start
+- grid-column-start
+- grid-row-end
+- grid-column-end
+
+```css
+/* 完整写法 */
+grid-column-start: 1; /* 第一列开始 */
+grid-column-end: 2; /* 第二列结束 */
+grid-row-start: 1; /* 第一行开始 */
+grid-row-end: 4; /* 第四行结束 */
+
+/* 一气呵成 */
+grid-area: 1 / 1 / 4 / 2;
+```
+
+我们使用 `margin` 缩写, 是通过顶部开始然后顺时针定义各个边距, 在 `grid-area` 只要记住他是逆时针就可以了.
 
 
 
