@@ -488,7 +488,7 @@ grid-row-end: 4; /* 第四行结束 */
 
 ```css
 grid-column-start: 2; /* 从第二个编号线开始 */
-grid-column-end: 3 span; /* 横跨 3 列结束, 也就是编号为 5 */
+grid-column-end: span 3; /* 横跨 3 列结束, 也就是编号为 5 */
 ```
 
 ```html
@@ -511,7 +511,7 @@ grid-column-end: 3 span; /* 横跨 3 列结束, 也就是编号为 5 */
 p:first-child{
   background:aqua;
   grid-column-start: 2; /* 从第二个编号线开始 */
-  grid-column-end: 3 span; /* 横跨 3 列轨道结束, 也就是编号为 5 */
+  grid-column-end: span 3; /* 横跨 3 列轨道结束, 也就是编号为 5 */
 }
 
 *{
@@ -544,6 +544,108 @@ grid-column: span 2 / 2;
 由于网格线的结束线是 2 , 是完全无法容纳 2 个列轨道的, 但是指定了结束编号线, 那么 列轨道 会自动的适应编号线的定位.
 
 ## 模板布局
+
+网格模板区域允许你对一篇区域进行命名, "区域" 指的是网格布局中的元素, 而命名后的 "区域" 就成为了模板.
+
+```css
+grid-area: template; /* 声明一个 template 模板区域 */ 
+grid-area: main; /* 声明一个 main 模板区域 */ 
+```
+
+和字面意思一样既然叫做模板, 因该是可以在某个地方使用的:
+
+```css
+grid-template-areas: 
+      "template template template"
+      "main main main"; /* 2*3 的布局 */
+```
+
+这应该是 css 中你见过的最诡异的语法, 请仔细观察上面的例子, 虽然语法奇特但是却不难理解, 因为 `grid-template-areas` 属性中提供的参数与实际的布局有着强烈的映射关系.
+
+接下来我们来看一个完整的例子, 我们要建立一个 "页面", 这个页面有三个区域:
+
+- 页头一般叫做 header
+- 内容区域一般叫做 main
+- 页尾一般叫做 footer
+
+除了内容区域需要有3列外, 其余的均占满一行, 我们先来构建布局:
+
+```html
+<body>
+  <header>header</header>
+  <!-- 你可能好奇这里为什么不使用 main 元素因为 main 标签在一个页面中只能出现一次 -->
+  <!-- 但是我们有解决方式, 这里先买一个关子 -->
+    <div class="main1">main</div>
+    <div class="main2">main</div>
+    <div class="main3">main</div>
+  <footer>footer</footer>
+</body>
+```
+
+其次在编写样式:
+
+```css
+header,footer,div{
+  background:aqua;
+}
+
+body{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+  grid-gap:5px;
+  /* 使用网格模板 */ 
+  grid-template-areas:
+    "header header header"
+    "main1 main2 main3"
+    "footer footer footer"
+}
+
+/* 声明网格模板 */ 
+header{
+  grid-area:header;
+}
+
+.main1{
+  grid-area: main1;
+}
+
+.main2{
+  grid-area:main2;
+}
+
+.main3:{
+  grid-area:main3;
+}
+
+footer{
+  grid-area:footer;
+}
+```
+
+结果:
+
+![1575856756995](./assets\1575856756995.png)
+
+#### 空白网格单元
+
+有的时候我们希望在网格布局中留出空白的单元格, 而不是使用网格区域进行填充, 你需要在 `grid-template-areas` 上使用 `.` 点号即可, 继续上面的例子我们来实现添加一个空行:
+
+```css
+  grid-template-areas:
+    "header header header"
+    "main1 main2 main3"
+    ". . ."
+    "footer footer footer"
+```
+
+效果:
+
+![1575858383656](./assets\1575858383656.png)
+
+
+
+
 
 ## 命名线布局
 
