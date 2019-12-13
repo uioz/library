@@ -442,20 +442,18 @@ grid-column: 2 / 3;
 
 `grid-row` 同理这里我们就不在展开了.
 
-利用缩写属性的同时我们还可以继续使用默认跨度:
+利用缩写属性的同时我们还可以继续利用默认跨度:
 
 ```css
-/* 只定义行开始 */
-grid-column-start: 1;
-
-/* 等同于 "缩写属性" + "默认跨度" */
-grid-column: 1;
-
-/* 只定义列开始 */
-grid-column-row: 2;
-
-/* 等同于 "缩写属性" + "默认跨度" */
+/* 只定义行开始 默认的 grid-row-end 是 2 */
+grid-row-start: 1;
+/* "缩写属性" + "默认跨度" */
 grid-row: 1;
+
+/* 只定义列开始 默认的 grid-column-end 是 3 */
+grid-column-start: 2;
+/* "缩写属性" + "默认跨度" */
+grid-column: 2;
 ```
 
 #### `grid-area` 属性
@@ -545,7 +543,7 @@ grid-column: span 2 / 2;
 
 ## 模板布局
 
-网格模板区域允许你对一篇区域进行命名, "区域" 指的是网格布局中的元素, 而命名后的 "区域" 就成为了模板.
+网格模板区域允许你对一片区域进行命名, 而命名后的 "区域" 就被称为模板.
 
 ```css
 grid-area: template; /* 声明一个 template 模板区域 */ 
@@ -557,10 +555,10 @@ grid-area: main; /* 声明一个 main 模板区域 */
 ```css
 grid-template-areas: 
       "template template template"
-      "main main main"; /* 2*3 的布局 */
+      "main     main     main"; /* 2*3 的布局 */
 ```
 
-这应该是 css 中你见过的最诡异的语法, 请仔细观察上面的例子, 虽然语法奇特但是却不难理解, 因为 `grid-template-areas` 属性中提供的参数与实际的布局有着强烈的映射关系.
+这应该是 css 中你见过的最诡异的语法, 请仔细观察上面的例子, 虽然语法奇特但是却不难理解, 因为 `grid-template-areas` 属性中提供的参数与 `grid-area` 提供的元素命名有着强烈的映射关系.
 
 接下来我们来看一个完整的例子, 我们要建立一个 "页面", 这个页面有三个区域:
 
@@ -573,8 +571,6 @@ grid-template-areas:
 ```html
 <body>
   <header>header</header>
-  <!-- 你可能好奇这里为什么不使用 main 元素因为 main 标签在一个页面中只能出现一次 -->
-  <!-- 但是我们有解决方式, 这里先买一个关子 -->
     <div class="main1">main</div>
     <div class="main2">main</div>
     <div class="main3">main</div>
@@ -643,7 +639,22 @@ footer{
 
 ![1575858383656](./assets\1575858383656.png)
 
+#### 跨域多个网格单元
 
+概念和 `excel` 中的合并单元格类似, 在模板布局中实现起来也异常简单, 下面的例子中我简单的重复几次命名使得 `main1` 和 `main2` 构成了一个矩形区域:
+
+```css
+  grid-template-areas:
+    "header header header"
+    "main1  main2  main2"
+    "main1  main2  main2"
+    "footer footer footer"
+```
+
+模板布局就会映射到页面布局:
+![1576203343814](./assets\1576203343814.png)
+
+#### 简写
 
 
 
