@@ -654,11 +654,99 @@ footer{
 模板布局就会映射到页面布局:
 ![1576203343814](./assets\1576203343814.png)
 
-#### 简写
+#### `grid-template` 显式网格简写
 
+`grid-template` 它可以允许你在一次编写中指定多个属性包含:
 
+- grid-template-rows
+- grid-template-columns
+- grid-template-areas
+
+也就是说可以在一个属性中指定轨道高度轨道列数以及模板布局, 他被称为 **显示网格简写** 是因为它无法控制创建隐式轨道的行为.
+
+```css
+    grid-template: 
+      "header header header header" minmax(100px, auto)
+      "main1  main1  main2  main3" minmax(100px, auto)
+      "footer footer footer footer" minmax(100px, auto)
+             / 1fr 1fr 1fr 1fr;          
+```
+
+在每一行的末尾我们指定了该轨道行高, 在整个属性的末尾通过 `/` 进行分割后指定轨道列数以及宽度.
+
+#### `grid` 简写
+
+这个简写比 `grid-template` 还要更进一步, 它还允许你控制隐式轨道, 这个属性在使用的过程中会将 `grid-gap` 设置为 0, 且无法在该简写中指定这个属性.
+
+该简写相当于:
+
+- grid-template-rows
+- grid-template-columns
+- grid-template-areas
+- grid-auto-rows
+- grid-auto-columns
+- grid-auto-flow
+
+TODO: 继续编写
 
 ## 命名线布局
+
+在 "编号线" 一节中我们使用了数字作为编号, 来控制网格区域的大小. 线布局中不仅仅可以使用编号, 还可以为其命名, 然后利用命名来进行布局.
+
+### 模板布局隐式定义的命名线
+
+在我们使用模板布局的时候会自动创建命名线, 现在我们先来观察一下命名线生成的规则, 下方的代码通过模板布局生成了一个 2*2 的布局:
+
+```html
+<body>
+  <div class="element1">element1</div>
+  <div class="element2">element2</div>
+  <div class="element3">element3</div>
+  <div class="element4">element4</div>
+</body>
+```
+
+在 css 中我给四个单元格进行命名:
+
+```css
+header,footer,div{
+  background:aqua;
+}
+
+body{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+  grid-gap:5px;
+  grid-template-areas:
+    "element1 element2"
+    "element3 element4"
+}
+/* 命名在这里 */
+.element1{
+  grid-area:element1;
+}
+
+.element2{
+  grid-area:element2;
+}
+
+.element3{
+  grid-area:element3;
+}
+
+.element4{
+  grid-area:element4;
+}
+```
+
+布局结果(含对应的命名线):
+
+![1576304156181](C:\Users\zhao\Documents\library\article\assets\1576304156181.png)
+
+从上图可以看到网格布局给网格区域自动分配了 "命名线", 分配命名线的规则就是获区域的命名, 然后为其添加 `-start` 来表示开始, 添加 `-end` 表示结束.
+
+
 
 ## 缩写格式
 
