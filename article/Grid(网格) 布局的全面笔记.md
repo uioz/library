@@ -706,7 +706,7 @@ TODO: 继续编写
 </body>
 ```
 
-在 css 中我给四个单元格进行命名:
+在 css 中我给四个单元格通过 `grid-area` 进行模板区域命名:
 
 ```css
 header,footer,div{
@@ -740,13 +740,110 @@ body{
 }
 ```
 
-布局结果(含对应的命名线):
+此时模板布局会自动的根据模板区域的名称来创建命名线, 这个过程是自动完成的, 所以是 "隐式定义".
 
 ![1576304156181](C:\Users\zhao\Documents\library\article\assets\1576304156181.png)
 
-从上图可以看到网格布局给网格区域自动分配了 "命名线", 分配命名线的规则就是获区域的命名, 然后为其添加 `-start` 来表示开始, 添加 `-end` 表示结束.
+在从左至右的布局中命名线的生成规则如下首先拿到模板区域的命名, 其次为其添加 `-start`(顶部和左侧) 和 `-end`(底部或者右侧) 构成命名线, 就像上图中的一样.
 
+修改一下 HTML 代码, 我们来使用一下:
 
+```html
+<body>
+  <div class="element1">element1</div>
+  <div class="element2">element2</div>
+  <div class="element3">element3</div>
+  <div class="element4">element4</div>
+  <div class="test"></div>
+</body>
+```
+
+添加样式:
+
+```css
+/* 这会构成一层遮罩 */
+.test{
+  background:rgba(0,0,0,.2);
+  grid-column: element1-start / element1-end;
+  grid-row: element1-start / element3-end;
+}
+```
+
+结果:
+
+![1576461542720](./assets\1576461542720.png)
+
+### 使用命名线来布局
+
+可以直接使用命名线来定义布局, 和编号线布局一样, 每个网格单元需要声明自己占有的网格区域的大小, 在编号线中是通过编号(数字)来完成的, 在命名线布局中我们通过命名来完成.
+
+首先我们需要声明轨道:
+
+```css
+ display: grid;
+ grid-template-columns: [main-start] 1fr [content-start] 1fr [content-end] 1fr [main-end];
+ grid-template-rows: [main-start] 100px [content-start] 100px [content-end] 100px [main-end];
+```
+
+上例中的方括号中的内容就是编号线的名称而后面的单位指的是该命名线所占有的空间例如 `[main-start] 1fr` 如你所见这是一个 3*3 的布局.
+
+只声明轨道是没有通途的, 想要起作用网格单元还需要提供命名, 这样才能建立关联:
+
+```css
+.wrapper {
+ display: grid;
+ grid-gap:5px;
+ grid-template-columns: [main-start] 1fr [content-start] 1fr [content-end] 1fr [main-end];
+ grid-template-rows: [main-start] 100px [content-start] 100px [content-end] 100px [main-end];
+}
+.wrapper > div{
+  background:aqua;
+}
+.box1 {
+  grid-column-start: main-start;
+  grid-row-start: main-start;
+  grid-row-end: main-end;
+}
+.box2 {
+  grid-column-start: content-end;
+  grid-row-start: main-start;
+  grid-row-end: content-end;
+}
+.box3 {
+  grid-column-start: content-start;
+  grid-row-start: main-start;
+}
+.box4 {
+  grid-column-start: content-start;
+  grid-column-end: main-end;
+  grid-row-start: content-end;
+}
+```
+
+当然你也可以使用简写:
+
+```css
+.box1 {
+  grid-column-start: main-start;
+  grid-row: main-start / main-end;
+}
+.box2 {
+  grid-column-start: content-end;
+  grid-row: main-start / content-end;
+}
+.box3 {
+  grid-column-start: content-start;
+  grid-row-start: main-start;
+}
+.box4 {
+  grid-column: content-start / main-end;
+  grid-row-start: content-end;
+}
+```
+
+结果:
+
+![1576462397726](./assets\1576462397726.png)
 
 ## 缩写格式
 
