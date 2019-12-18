@@ -746,7 +746,7 @@ body{
 
 在从左至右的布局中命名线的生成规则如下首先拿到模板区域的命名, 其次为其添加 `-start`(顶部和左侧) 和 `-end`(底部或者右侧) 构成命名线, 就像上图中的一样.
 
-修改一下 HTML 代码, 我们来使用一下:
+修改一下 HTML 代码, 我们来使用一下命名线布局, 在这个例子中请注意 `<div class="test"></div>`:
 
 ```html
 <body>
@@ -785,9 +785,11 @@ body{
  grid-template-rows: [main-start] 100px [content-start] 100px [content-end] 100px [main-end];
 ```
 
-上例中的方括号中的内容就是编号线的名称而后面的单位指的是该命名线所占有的空间例如 `[main-start] 1fr` 如你所见这是一个 3*3 的布局.
+上例中的方括号中的内容就是编号线的名称而后面的单位依旧是原有的编号线单位, 简单的理解方式**3个轨道4条线**, N个轨道 N+1 条线.
 
-只声明轨道是没有通途的, 想要起作用网格单元还需要提供命名, 这样才能建立关联:
+
+
+只声明轨道是没有意义的, 想要起作用网格单元还需要提供命名, 这样才能建立关联:
 
 ```css
 .wrapper {
@@ -845,9 +847,79 @@ body{
 
 ![1576462397726](./assets\1576462397726.png)
 
-## 缩写格式
+### 为命名线定义多个名字
 
+在上一节[模板布局隐式定义的命名线](#模板布局隐式定义的命名线)中, 我们知道对于同一条线是可以同时存在多个命名的.
 
+所以如何在手动的为命名线定义多个名字呢, 只要在方括号中使用空格隔开就可以了:
 
-# 其他属性
+```
+[three-start four-start]
+```
 
+### 命名线与编号线的混用
+
+请留意命名线的方括号的语法是附加在轨道单位上的:
+
+```
+grid-template-columns: [main-start] 1fr [content-start] 1fr [content-end] 1fr [main-end];
+```
+
+如果我们去掉方括号那么就是普通的编号线语法:
+
+```
+grid-template-columns:1fr 1fr 1fr;
+```
+
+所以可以混合这两种语法:
+
+```
+grid-template-columns: 1fr [content-start] 1fr [content-end] 1fr;
+```
+
+### 由命名线定义的隐式网格区域
+
+如果你给某个网格区域的四条命名线定义了相同的名字, 就相当于变相的使用了模板布局:
+
+```html
+  <div class="wrap">
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+    <div>4</div>
+    <div>6</div>
+    <div>7</div>
+    <div>8</div>
+    <div>9</div>
+    <div class="content">content</div>
+  </div>
+```
+
+请留意这里的 `<div class="content">content</div>` 在末尾.
+
+```css
+.wrap{
+  display:grid;
+  grid-gap:5px;
+  grid-template-columns: 1fr [content-start] 1fr [content-end] 1fr;
+  grid-template-rows: 1fr [content-start] 1fr [content-end] 1fr;
+}
+
+.wrap > div{
+  background:aqua;
+}
+
+.content{
+  grid-area:content;
+}
+```
+
+请留意我们没有使用 "模板布局" 语法.
+
+结果在末尾定义的 content 却跑到了中间, 不仅仅是为其定义了 `grid-area:content;` 还包括了**命名线定义的隐式网格区域**:
+
+![1576635352355](./assets\1576635352355.png)
+
+# 进一步阅读
+
+[https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Grid_Layout/Layout_using_Named_Grid_Lines#%E7%94%A8_repeat()_%E5%AE%9A%E4%B9%89%E7%9B%B8%E5%90%8C%E5%90%8D%E5%AD%97%E7%9A%84%E5%A4%9A%E6%9D%A1%E7%BA%BF](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Grid_Layout/Layout_using_Named_Grid_Lines#用_repeat()_定义相同名字的多条线)
