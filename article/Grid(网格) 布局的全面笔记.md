@@ -916,10 +916,20 @@ grid-template-columns: 1fr [content-start] 1fr [content-end] 1fr;
 
 请留意我们没有使用 "模板布局" 语法.
 
-结果在末尾定义的 content 却跑到了中间, 不仅仅是为其定义了 `grid-area:content;` 还包括了**命名线定义的隐式网格区域**:
-
 ![1576635352355](./assets\1576635352355.png)
 
+结果在末尾定义的 content 却跑到了中间, 不仅仅是为其定义了 `grid-area:content;` 而且我们为这个区域定义了完整的命名线, 相当于隐式的为一个网格单元进行了命名.
+
 # 进一步阅读
+
+## 网格单元的自动定位
+
+我们指定了一个  3*3 的布局, 那么第14个网格单元该如何布局呢?
+
+>  CSS 网格布局规范还包含另外一组规则, 用来约定当部分或全部子项目没有被明确指定位置时该如何处理.
+
+
+
+
 
 [https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Grid_Layout/Layout_using_Named_Grid_Lines#%E7%94%A8_repeat()_%E5%AE%9A%E4%B9%89%E7%9B%B8%E5%90%8C%E5%90%8D%E5%AD%97%E7%9A%84%E5%A4%9A%E6%9D%A1%E7%BA%BF](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Grid_Layout/Layout_using_Named_Grid_Lines#用_repeat()_定义相同名字的多条线)
