@@ -33,3 +33,8 @@
 [Google 开发者平台-WEB 基础](https://developers.google.com/web/fundamentals?hl=zh-cn) 提供了大量的优质 web 技术文章, 页面左侧提供了文章索引.
 
 [ES6标准入门-阮一峰](http://es6.ruanyifeng.com/), ES6 入门教程 - ECMAScript 6入门, 非常全面的ES6电子书籍, 页面左侧提供了章节索引.
+
+# CSS 关键知识概念
+
+[Layout and the containing block](https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block) 布局与包含块, 该文章准确的描述了 "包含块" 的概念, 指出了一个元素的大小和位置是如何计算的准则.
+
