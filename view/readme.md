@@ -38,3 +38,8 @@
 
 [Layout and the containing block](https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block) 布局与包含块, 该文章准确的描述了 "包含块" 的概念, 指出了一个元素的大小和位置是如何计算的准则.
 
+[Block formatting context](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context) 块格式化上下文, 该文件探讨了 BFC 的概念, 以及如何触发 BFC, 并且讨论了它与 "浮动" 之间的关系.
+
+[The stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context) 层叠上下文(堆叠上下文), 该文章阐述了 z-index 具体表现, 以及背后的原理是根据 "层叠上下文" 这一概念运行, 并具体的探讨了 "层叠上下文" 在不同情况下的表现.
+
+[Stacking with floated blocks](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/Stacking_and_float) 层叠和浮动块(之间的相互作用), 该文章讨论了当 "定位中使用了 z-index 来控制层叠的时候, 遇到浮动元素该如何渲染" 这以具体的问题.
