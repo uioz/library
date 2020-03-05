@@ -36,6 +36,18 @@
 
 # CSS 关键知识概念
 
+## CSS Flow Layout (`display: block`, `display: inline`)
+
+- [Block and Inline Layout in Normal Flow](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flow_Layout/Block_and_Inline_Layout_in_Normal_Flow)
+- [Flow Layout and Overflow](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flow_Layout/Flow_Layout_and_Overflow)
+- [Flow Layout and Writing Modes](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flow_Layout/Flow_Layout_and_Writing_Modes)
+- [Formatting Contexts Explained](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flow_Layout/Formatting_Contexts_Explained)
+- [In Flow and Out of Flow](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flow_Layout/In_Flow_and_Out_of_Flow)
+
+
+
+[Visual formatting model](https://developer.mozilla.org/en-US/docs/Web/CSS/Visual_formatting_model) 视觉格式化模型, 该文章描述了文档布局背后所运转的机制, 即 "盒" 模型, 以及 "盒" 模型与布局之间的基本原则.
+
 [Layout and the containing block](https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block) 布局与包含块, 该文章准确的描述了 "包含块" 的概念, 指出了一个元素的大小和位置是如何计算的准则.
 
 [Block formatting context](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context) 块格式化上下文, 该文件探讨了 BFC 的概念, 以及如何触发 BFC, 并且讨论了它与 "浮动" 之间的关系.
