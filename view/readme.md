@@ -1,5 +1,14 @@
 # web 开发优秀资源索引
 
+# JavaScript
+
+[Understanding Scope and Context in JavaScript](http://ryanmorr.com/understanding-scope-and-context-in-javascript/)理解 JavaScript 中的 "上下文" 与 "作用域".
+
+- [js 中的活动对象 与 变量对象 什么区别？](https://www.zhihu.com/question/36393048)
+- [讲清楚之 javascript 变量对象](https://segmentfault.com/a/1190000015077971)
+
+# 浏览器
+
 ## 浏览器工作解析
 
 [渲染树构建、布局及绘制](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-tree-construction?hl=zh-cn)
