@@ -144,3 +144,42 @@ function ObjectFactory() {
 }
 ```
 
+# 防抖 debounce
+
+ 基本操作之一 bounce(跳动) de(表否定) debounce(防抖).
+
+```javascript
+function debounce(fun, wait) {
+  let timer;
+
+  return function() {
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    timer = setTimeout(() => {
+      fun.apply(this, arguments);
+
+      timer = undefined;
+    }, wait);
+  };
+}
+```
+
+# 节流
+
+```javascript
+function throttle(fun, interval) {
+  let timeStamp = Date.now();
+
+  return function() {
+    let now = Date.now();
+
+    if (now - timeStamp >= interval) {
+      fun.apply(this, arguments);
+      timeStamp = now;
+    }
+  };
+}
+```
+
