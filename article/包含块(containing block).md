@@ -1,3 +1,9 @@
+# 简介
+
+包含块是 css 中的一个很重要的概念, 简单来说一个元素应该在什么位置展示和定位? 应该在包含块内, 那么如何找到给定元素的包含块, 便是该章节讨论的问题.
+
+另外这篇文章不是源规范的标准翻译, 不太重要的部分我就忽略了, 修改了一些表格之类的东西, 还加入了一些我的思考. 如果追求严谨可以去查看源规范.
+
 # 包含块(containing block)
 
 > https://drafts.csswg.org/css2/visudet.html#containing-block-details
@@ -21,9 +27,17 @@
 <span style='background:aqua;position:relative;padding:10px'>hello <em style="background:white;position:absolute;top:0;left:0;">world</em>!</span>
 ```
 
-在分页媒体中，绝对定位的元素相对于其包含块定位，忽略任何分页符（就像文档是连续的一样）。元素可能会在随后的页面中被打碎.
+> In paged media, an absolutely positioned element is positioned relative to its containing block ignoring any page breaks (as if the document were continuous). The element may subsequently be broken over several pages.
+>
+> For absolutely positioned content that resolves to a position on a page other than the page being laid out (the current page), or resolves to a position on the current page which has already been rendered for printing, printers may place the content
+>
+> - on another location on the current page,
+> - on a subsequent page, or
+> - may omit it.
 
-例子, 由如下 HTML:
+
+
+在下面的例子中的包含块没有使用任何定位:
 
 ```html
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
@@ -72,11 +86,11 @@
 | em1        | div1       | 4.b      |
 | strong1 ** | em1        | 2        |
 
-** 这里再规范中很模糊至少我没有找到完整的相关描述. 总的来讲 strong1 的包含块是 em1 的原因是 em1 绝对定位了, 而条件 2 的说法是相对于 block container 的, 但是在规范中, 绝对定位元素仅仅被描述为可以建立块级格式化上下文, 而块级格式化上下文并没有说明内部是否必须都是是块级盒子(block-level box), 块级盒子部分也只说明它可以参与块级格式化上下文的建立, 最关键的是 block container 的定义是仅仅能包含块级盒子, 所以没有关键证据指出 em1 此时是 block container.
+** 这里在规范中很模糊至少我没有找到完整的相关描述. 总的来讲 strong1 的包含块是 em1 的原因是 em1 绝对定位了, 而条件 2 的说法是相对于 block container 的, 但是在规范中, 绝对定位元素仅仅被描述为可以建立块级格式化上下文, 而块级格式化上下文并没有说明内部是否必须都是是块级盒子(block-level box), 块级盒子部分也只说明它可以参与块级格式化上下文的建立, 最关键的是 block container 的定义是仅仅能包含块级盒子, 所以没有关键证据指出 em1 此时是 block container.
 
 所以产生一个问题 "containing box 是否就是 block container" ?
 
-## 更新
+## 问题更新
 
 > https://www.w3.org/TR/CSS22/visuren.html#block-boxes
 
