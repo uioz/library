@@ -2,11 +2,11 @@
 
 > https://drafts.csswg.org/css2/visudet.html#containing-block-details
 
-元素盒子(element's box)的位置和大小有时是相对于特定的矩形进行计算的, 这个矩形被称为这个元素的包含块. 包含块的定义如下:
+元素所对应的盒子(element's box) 的位置和大小有时是相对于特定的矩形进行计算的, 这个矩形被称为这个元素的包含块. 包含块的定义如下:
 
 1. 根元素所在的包含块是一个被称为初始包含块的矩形.  对于连续媒体，它具有视口(viewport)的尺寸，并锚定在画布原点；它是分页媒体的页面区域。初始包含块的“direction”属性与根元素的“direction”属性相同。 
 
-2. 对于其他元素，如果元素的 `positiion` 是 `relative` 或 `static` ,由离它最近的块容器(block container)的内容区域的边缘建立.
+2. 对于其他元素，如果元素的 `positiion` 是 `relative` 或 `static` ,由离它最近的块容器(block container)的内容区域(content area)的边缘建立.
 
 3. 如果元素的定位使用 `fixed` 包含块对于连续媒体由视口建立, 对于分页媒体由页面区域建立.
 
@@ -74,4 +74,18 @@
 
 ** 这里再规范中很模糊至少我没有找到完整的相关描述. 总的来讲 strong1 的包含块是 em1 的原因是 em1 绝对定位了, 而条件 2 的说法是相对于 block container 的, 但是在规范中, 绝对定位元素仅仅被描述为可以建立块级格式化上下文, 而块级格式化上下文并没有说明内部是否必须都是是块级盒子(block-level box), 块级盒子部分也只说明它可以参与块级格式化上下文的建立, 最关键的是 block container 的定义是仅仅能包含块级盒子, 所以没有关键证据指出 em1 此时是 block container.
 
-所以这些都说不通, 可能是我没有找到说通的部分, 但也有可能是规范没有描写完整.
+所以产生一个问题 "containing box 是否就是 block container" ?
+
+## 更新
+
+> https://www.w3.org/TR/CSS22/visuren.html#block-boxes
+
+在 css2.2 规范中指明了 block-level 就是 block container.
+
+所以文字现在成为了:
+
+> 问题在于 containing box 是否就是 block container
+>
+> 以及 containing box 是否就是 block-level box
+
+另外我查阅了最新的 CSS3 规范草案和定位章节目前没有找到合理的解释.
