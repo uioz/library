@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: #333;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin: 0;
+      height: 100vh;
+    }
+
+    #container {
+      display: flex;
+      width: 450px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .circle {
+      background-color: #fff;
+      height: 14px;
+      width: 14px;
+      border-radius: 50%;
+      cursor: pointer;
+      margin: 8px;
+      transform: scale(1);
+      will-change: transform;
+      transition: transform .3s linear;
+    }
+
+    .circle.grow {
+      transform: scale(2);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+  <script>
+
+    const conatiner = document.getElementById('container')
+    const dotmatrix = []
+    const dotmatrixFragment = document.createDocumentFragment()
+
+    let rows = 15;
+
+    while (rows--) {
+
+      const row = [];
+      dotmatrix.push(row);
+
+      for (let index = 0; index < 15; index++) {
+        const dot = document.createElement('div')
+        dot.classList.add('circle')
+        row.push(dot)
+        dot.xPos = index;
+        dot.yPos = -rows + 14;
+        dotmatrixFragment.appendChild(dot)
+
+      }
+
+    }
+
+    class Render {
+
+      constructor(elem, matrix) {
+
+        if (elem.grow === true) {
+          return
+        }
+
+        elem.classList.add('grow')
+        elem.grow = true;
+
+        this.matrix = matrix
+
+        setTimeout(() => {
+          this.grow(+elem.xPos, +elem.yPos)
+          this.matrix = null
+        }, 100);
+
+        setTimeout(() => {
+          elem.classList.remove("grow")
+          elem.grow = false;
+        }, 300);
+
+      }
+
+      grow(xPos, yPos) {
+
+        const elems = [
+          this.matrix[yPos] && this.matrix[yPos][xPos + 1],
+          this.matrix[yPos] && this.matrix[yPos][xPos - 1],
+          this.matrix[yPos + 1] && this.matrix[yPos + 1][xPos],
+          this.matrix[yPos - 1] && this.matrix[yPos - 1][xPos],
+        ]
+
+        for (const elem of elems) {
+          if (elem) {
+            new Render(elem, this.matrix)
+          }
+        }
+
+      }
+
+    }
+
+    conatiner.appendChild(dotmatrixFragment);
+
+    conatiner.addEventListener('click', function (event) {
+
+      if (event.target !== conatiner) {
+        new Render(event.target, dotmatrix)
+      }
+
+    })
+
+  </script>
+</body>
+
+</html>
