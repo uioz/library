@@ -1,14 +1,18 @@
+网上有很多与执行上下文的文章, 绝大多数还讨论的是 ES3(2002) 中的内容.
+
+这篇文章是对 ECMAScript2019 规范一个章节部分内容的翻译, 主要内容是 "执行上下文与可执行代码"
+
+> https://www.ecma-international.org/ecma-262/10.0/index.html#sec-executable-code-and-execution-contexts
+
+我英语是真的不行, 这篇文章中估计存在一些错误, 不过这篇文章我应该会持续更新, 直到可以描述 JavaScript 的基本运行为止.
+
 # 词法环境
 
-词法环境是一种规范类型它定义标识符与 ECMAScript 代码词法嵌套中具体变量与函数之间的关联.
+词法环境是一种规范类型，它使用 ECMAScript 词法嵌套的结构去定义标识符与特定变量和函数的关联. 词法环境由环境记录和可能为 null 的外部词法环境引用. 通常一个词法环境和具体的 ECMAScript 代码的语法结构相关, 例如 函数声明, 代码块, try 语句的 catch 块和每次代码被求值时所创建的词法环境.
 
-词法环境由环境记录和一个可能为 null 的外部环境引用.
+"环境记录"中记录标识符绑定, 这些标识符绑定在其相关联的词法环境作用域中创建. 它被称为词法环境的 "环境记录".
 
-通常一个词法环境和具体的 ECMAScript 代码的语法结构相关, 例如 函数声明, 代码块, try 语句的 catch 块, 和每次代码被求值时所创建的词法环境.
-
-一个环境记录记录了那些在对应的词法环境作用域所创建的标识符绑定. 它被称为词法环境的 "环境记录".
-
-外部环境引用用于对词法环境中的值的逻辑嵌套进行建模. 内部词法环境的外部引用引用着逻辑上围绕着内部词法环境的外部词法环境. 当然, 外部词法环境也会拥有它的外部词法环境. 一个词法环境作为外部环境时可以作为多个内部环境的外部环境. 例如, 如果一个函数声明内部拥有两个嵌套的函数声明那么每一个嵌套函数的词法环境都将其外部词法环境作为当前对周围函数求值的词法环境. (太拗口了, 简单来说每一个嵌套函数的外部环境引用就是这个定义了两个函数的词法环境.)
+外部环境引用用于词法环境值的逻辑嵌套建模. 内部词法环境的外部引用引用着逻辑上围绕着内部词法环境的外部词法环境. 当然, 外部词法环境也会拥有它的外部词法环境. 一个词法环境作为外部环境时可以作为多个内部环境的外部环境. 例如, 如果一个函数声明内部拥有两个嵌套的函数声明那么每一个嵌套函数的词法环境都将其外部词法环境作为当前对周围函数求值的词法环境. (太拗口了, 简单来说每一个嵌套函数的外部环境引用就是这个定义了两个函数的词法环境.)
 
 全局词法环境是一种没有外部环境的词法环境. 也就是说全局词法环境的外部环境的引用时 null. 全局词法环境的环境记录可能被标识符绑定以及一个关联的全局对象该对象属性上提供了某些全局环境的标识符绑定所预填充. 当 ECMAScript 代码一旦执行, 额外的属性可能会被添加到全局对象上而最初的属性也可能会被修改.
 
@@ -29,7 +33,7 @@
 
 全局环境记录和函数环境记录是专门用于脚本全局声明和函数内顶级声明的特殊环境记录.
 
-出于规范化的目的环境记录值是记录规范类型中的值而且可以通过一个简单的面向对象方式的方式想象, 其结构如下
+出于规范化的目的环境记录值是记录规范类型值且可以通过一个简单的面向对象的结构理解, 结构如下
 
 - 环境记录
   - 声明式环境记录
@@ -40,9 +44,9 @@
 
 抽象类包含了定义在 [表14](https://www.ecma-international.org/ecma-262/10.0/index.html#table-15)  中的抽象规范方法. 这些抽象方法对于不同的字类都有不同的具体算法.
 
-Table 14: Abstract Methods of Environment Records
+表14: 环境记录的抽象方法
 
-| Method                       | Purpose                                                      |
+| 方法                         | 含义                                                         |
 | ---------------------------- | ------------------------------------------------------------ |
 | HasBinding(N)                | Determine if an [Environment Record](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-environment-records) has a binding for the String value N. Return true if it does and false if it does not. |
 | CreateMutableBinding(N, D)   | Create a new but uninitialized mutable binding in an [Environment Record](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-environment-records). The String value N is the text of the bound name. If the Boolean argument D is true the binding may be subsequently deleted. |
@@ -61,13 +65,13 @@ Table 14: Abstract Methods of Environment Records
 
 | 中文名称       | 英文名称                                                     |
 | -------------- | ------------------------------------------------------------ |
-| 词法环境       | Lexical Environments                                         |
-| 环境记录       | Environment Records                                          |
-| 标识符绑定     | identifier bindings                                          |
-| 声明式环境记录 | declarative Environment Records                              |
-| 对象式环境记录 | object Environment Records                                   |
-| 全局环境记录   | Global Environment Records                                   |
-| 函数环境记录   | function Environment Records                                 |
+| 词法环境       | Lexical Environment                                          |
+| 环境记录       | Environment Record                                           |
+| 标识符绑定     | identifier binding                                           |
+| 声明式环境记录 | declarative Environment Record                               |
+| 对象式环境记录 | object Environment Record                                    |
+| 全局环境记录   | Global Environment Record                                    |
+| 函数环境记录   | function Environment Record                                  |
 | 记录规范类型   | the [Record](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-list-and-record-specification-type) specification type |
 
 # 范围
@@ -111,15 +115,49 @@ Table 14: Abstract Methods of Environment Records
 
 | 组件                                                         | 功能                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 代码执行状态                                                 | [执行上下文](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-execution-contexts)相关连代码执行, 暂停, 恢复执行, 所需要的全部状态. |
-| 函数                                                         | 如果当前[执行上下文](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-execution-contexts)正在执行[函数对象](https://www.ecma-international.org/ecma-262/10.0/index.html#function-object)的代码, 那么组件的值就是这个[函数对象](https://www.ecma-international.org/ecma-262/10.0/index.html#function-object). 如果正在执行的上下文执行的是 [Script](https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Script) 或者 [Module](https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Module) 的代码, 这个是值就是 null. |
-| [范围](https://www.ecma-international.org/ecma-262/10.0/index.html#realm) | 关联代码从中访问 ECMAScript 资源的[范围记录](https://www.ecma-international.org/ecma-262/10.0/index.html#realm-record). |
-| 脚本还是模块                                                 | The [Module Record](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-abstract-module-records) or [Script Record](https://www.ecma-international.org/ecma-262/10.0/index.html#script-record) from which associated code originates. If there is no originating script or module, as is the case for the original [execution context](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-execution-contexts) created in [InitializeHostDefinedRealm](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-initializehostdefinedrealm), the value is null. |
+| code evaluation state(代码执行状态)                          | [执行上下文](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-execution-contexts)相关连代码执行, 暂停, 恢复执行, 所需要的全部状态. |
+| Function(函数)                                               | 如果当前[执行上下文](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-execution-contexts)正在执行[函数对象](https://www.ecma-international.org/ecma-262/10.0/index.html#function-object)的代码, 那么组件的值就是这个[函数对象](https://www.ecma-international.org/ecma-262/10.0/index.html#function-object). 如果正在执行的上下文执行的是 [Script](https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Script) 或者 [Module](https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Module) 的代码, 这个是值就是 null. |
+| Realm([范围](https://www.ecma-international.org/ecma-262/10.0/index.html#realm)) | 关联代码从中访问 ECMAScript 资源的[范围记录](https://www.ecma-international.org/ecma-262/10.0/index.html#realm-record). |
+| ScriptOrModule(脚本或模块)                                   | 模块记录或者脚本记录与对应的源代码有关. 如果不存在起始脚本或者模块, 这种情况就像初始上下文通过 [InitializeHostDefinedRealm](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-initializehostdefinedrealm) 建立一样, 其值为 null. |
 
-| 中文名称               | 英文名称                          |
-| ---------------------- | --------------------------------- |
-| 代理                   | agent                             |
-| 代理的执行中执行上下文 | agent's running execution context |
+由执行中的执行上下文所执行的代码可以在本规范中定义的节点处暂缓执行. 一旦执行中的执行上下文暂停另外一个执行上下文就有可能称为运行中的执行上下文运行它的代码. 随后被暂停的执行上下文可能重新称为执行中的执行上下文在原来暂停处执行它剩余的代码. 运行中/执行上下文之间的状态转换以 后进/先出 的堆栈方式进行. 但是有些 ECMAScript 的特性要求运行中的执行上下文进行非 后进/先出 的过渡方式.
+
+运行中的执行上下文的范围组件值又被称为当前范围记录. 运行中执行上下文的函数组件值也被称为活动函数对象.
+
+ECMAScript 代码的执行上下文具有 [表22](https://www.ecma-international.org/ecma-262/10.0/index.html#table-23) 中提到的额外状态组件.
+
+| 组件     | 含义                                                         |
+| -------- | ------------------------------------------------------------ |
+| 词法环境 | 识别这个执行上下文中的词法环境, 用于解析由代码产生的标识符引用. |
+| 变量环境 | 识识别这个执行上下文中的词法环境, 中的环境记录持有的由变量声明所创建的绑定. |
+
+执行上下文的词法环境和变量环境永远都是词法环境.
+
+表示生成器对象求值的执行上下文具有表23中列出的其他状态组件。
+
+Table 23: Additional State Components for Generator Execution Contexts
+
+| 组件   | 含义                                                         |
+| ------ | ------------------------------------------------------------ |
+| 生成器 | 此执行上下文正在执行的生[成器对象](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-execution-contexts)。 |
+
+在大多数情况下只有运行中上下文(执行上下文栈最上面的那个)是直接被规范中的算法操纵的. 因此当术语 "词法环境" 和 "变量环境" 没有明确时, 所指代的是在运行中执行上下文对应的组件.
+
+执行上下文存粹是规范机制, 不需要任何 ECMAScript 实例去创建与之对应的具体部件.
+
+本章后面介绍的都是运行中执行上下文中的各个抽象算法, 内容太多这里就不翻译了.
+
+**术语对照**:
+
+| 中文名称               | 英文名称                                                     |
+| ---------------------- | ------------------------------------------------------------ |
+| 代理                   | agent                                                        |
+| 代理的执行中执行上下文 | agent's running execution context                            |
+| 初始上下文             | original [execution context](https://www.ecma-international.org/ecma-262/10.0/index.html#sec-execution-contexts) |
+| 当前范围记录           | current realm record                                         |
+| 活动函数对象           | active function object                                       |
+| 变量声明               | [VariableStatement](https://www.ecma-international.org/ecma-262/10.0/index.html#prod-VariableStatement) |
+| 生成器对象             | GeneratorObject                                              |
 
 
 
