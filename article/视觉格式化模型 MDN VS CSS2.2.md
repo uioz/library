@@ -1,4 +1,4 @@
-# 视觉格式化模型
+# 视觉格式化模型(MDN)
 
 本篇文章的绝大部分内容来自于 MDN:
 
@@ -223,3 +223,20 @@ I am wrapped in an anonymous box.
 Except for table boxes, which are described in a later chapter, and replaced elements, a block-level box is also a block container box. A block container box either contains only block-level boxes or establishes an inline formatting context and thus contains only inline-level boxes. Not all block container boxes are block-level boxes: non-replaced inline blocks and non-replaced table cells are block containers but not block-level boxes. Block-level boxes that are also block containers are called block boxes.
 
 The three terms "block-level box," "block container box," and "block box" are sometimes abbreviated as "block" where unambiguous.
+
+# 视觉格式化模型(CSS2.2)
+
+CSS2.2 是 CSS2 规范中的最新标准, 在 Level3 规范中这部分并没有进行大量修改, 依然沿用 CSS2 的标准.
+
+另外标准中的东西太多了, 这里只挑重要的翻译没有必要和 MDN 重复的部分这里就不在翻译了.
+
+## 简介
+
+这章和下章描述了视觉格式化模型: 用户代理如何处理可视媒体的[文档树](https://www.w3.org/TR/CSS22/conform.html#doctree).
+
+在可视化模型中, 文档树上的每一个元素都会根据盒模型生成一个或者多个盒子. 这些盒子的布局由下列因素控制:
+
+- [box dimensions](https://www.w3.org/TR/CSS22/box.html#box-dimensions) and [type](https://www.w3.org/TR/CSS22/visuren.html#box-gen).
+- [positioning scheme](https://www.w3.org/TR/CSS22/visuren.html#positioning-scheme) (normal flow, float, and absolute positioning).
+- relationships between elements in the [document tree.](https://www.w3.org/TR/CSS22/conform.html#doctree)
+- external information (e.g., viewport size, [intrinsic](https://www.w3.org/TR/CSS22/conform.html#intrinsic) dimensions of images, etc.).
