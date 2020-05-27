@@ -236,7 +236,49 @@ CSS2.2 是 CSS2 规范中的最新标准, 在 Level3 规范中这部分并没有
 
 在可视化模型中, 文档树上的每一个元素都会根据盒模型生成一个或者多个盒子. 这些盒子的布局由下列因素控制:
 
-- [box dimensions](https://www.w3.org/TR/CSS22/box.html#box-dimensions) and [type](https://www.w3.org/TR/CSS22/visuren.html#box-gen).
-- [positioning scheme](https://www.w3.org/TR/CSS22/visuren.html#positioning-scheme) (normal flow, float, and absolute positioning).
-- relationships between elements in the [document tree.](https://www.w3.org/TR/CSS22/conform.html#doctree)
-- external information (e.g., viewport size, [intrinsic](https://www.w3.org/TR/CSS22/conform.html#intrinsic) dimensions of images, etc.).
+- [盒子尺寸](https://www.w3.org/TR/CSS22/box.html#box-dimensions) 和 [类型](https://www.w3.org/TR/CSS22/visuren.html#box-gen).
+- [定位方案](https://www.w3.org/TR/CSS22/visuren.html#positioning-scheme) (普通流, 浮动, 以及决定定位).
+- 在 [文档树](https://www.w3.org/TR/CSS22/conform.html#doctree) 上的两个元素之间的关系.
+- 外部信息 (例如, 视口大小, 来自图片的[固有](https://www.w3.org/TR/CSS22/conform.html#intrinsic)尺寸等).
+
+本章节和接下来的章节所定义的属性对于 [连续媒体](https://www.w3.org/TR/CSS22/media.html#continuous-media-group) 和 [分页媒体](https://www.w3.org/TR/CSS22/media.html#paged-media-group) 都适用. 但是, [外边距属](https://www.w3.org/TR/CSS22/box.html#margin-properties)性应用到分页媒体的时候含义会发生改变(详情请看 [分页模型](https://www.w3.org/TR/CSS22/page.html#page-margins) 了解更多).
+
+The visual formatting model does not specify all aspects of formatting (e.g., it does not specify a letter-spacing algorithm). [Conforming user agents](https://www.w3.org/TR/CSS22/conform.html#conformance) may behave differently for those formatting issues not covered by this specification.
+
+## 视口
+
+用于[连续媒体](https://www.w3.org/TR/CSS22/media.html#continuous-media-group)的用户代理通常为用户提供一个视口(屏幕上的一个窗口或者一片可视区域) 用户可以通过这种方式来浏览文档. 用户代理会在视口缩放后去调整文档的布局(可以参考 [初始包含块](https://www.w3.org/TR/CSS22/visudet.html#containing-block-details)).
+
+当视口小于文档所在绘制的画布大小的时候, 用户代理应该提供一种滚动机制. 每一个画布只能提供一个视口, 但是用户代理可以渲染多个[画布](https://www.w3.org/TR/CSS22/intro.html#canvas)(例如, 一个文档多个视图).
+
+## 包含块
+
+在 css2.2 中, 许多盒子的位置和大小的计算都是与被称为 "包含块" 的矩形盒子息息相关. 通常，生成的盒子充当子盒子的包含块; 我们称为一个盒子为它的后代 "建立" 了包含块. 短语 "盒子的包含块" 指的是 "盒子所在的包含块" 不是它创建的那个.
+
+每一个盒子的位置都是与它的包含块有关, 但是不会被其限制; 它可以溢出到包含块之外.
+
+有关包含块的尺寸如何计算的[细节](https://www.w3.org/TR/CSS22/visudet.html#containing-block-details)请移步[下一章](https://www.w3.org/TR/CSS22/visudet.html).
+
+## 控制盒子的生成
+
+下面的几节中描述了在 css2.2 中可能生成的几种不同类型的盒子.  盒子的类型在某种程度上影响其在可视化格式模型中的行为. 下面的 `display` 属性指定了盒子的类型.
+
+"display" 属性的某些值可以让源文档的元素生成 "主盒子" 它包含子盒子以及生成的内容, 并且也可以是任意定位方案中所涉及到的盒子. 除了主盒子: "list item"元素外, 某些元素还可能生成其他额外的盒子. 这些额外盒子相对于其主盒子放置.
+
+### 块级元素和块盒子
+
+| 术语                      | 对照翻译         |
+| ------------------------- | ---------------- |
+| Block-level element       | 块级元素         |
+| block boxes               | 块盒子           |
+| block-level principal box | 块级主盒子       |
+| block formatting context  | 块级格式化上下文 |
+| block container           | 块容器           |
+| block container box       | 块容器盒子       |
+|                           |                  |
+
+**注意**: 有时候为了简单 "盒子" 会被简写成 "盒".
+
+源文档中的块级元素会按照 "块" 进行视觉格式化(例如 段落). 同时它也是一种生成块级主盒子的元素. `display` 的某些属性值可以让一个元素变成 "块级" 包括 `block` `list-item` 和 `table` . 块级盒子是一种参与块级[格式化上下文](https://www.w3.org/TR/CSS22/visuren.html#block-formatting)的盒子.
+
+在 css2.2 中, 一个块级盒子同样也是块容器除非他是一个表格盒或者是可替换元素的主盒. 块容器盒要么只包含块级盒子要么建立一个
