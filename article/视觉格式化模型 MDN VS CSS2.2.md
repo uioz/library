@@ -273,12 +273,47 @@ The visual formatting model does not specify all aspects of formatting (e.g., it
 | block boxes               | 块盒子           |
 | block-level principal box | 块级主盒子       |
 | block formatting context  | 块级格式化上下文 |
-| block container           | 块容器           |
 | block container box       | 块容器盒子       |
-|                           |                  |
+| inline formatting context | 行内格式化上下文 |
+| inline-level boxes        | 行内级盒子       |
+| block container element   | 块容器元素       |
+| non-replaced inline block | 非替换行内块     |
+| non-replaced table cell   | 非替换单元格     |
+| block boxes               | 块盒子           |
 
 **注意**: 有时候为了简单 "盒子" 会被简写成 "盒".
 
-源文档中的块级元素会按照 "块" 进行视觉格式化(例如 段落). 同时它也是一种生成块级主盒子的元素. `display` 的某些属性值可以让一个元素变成 "块级" 包括 `block` `list-item` 和 `table` . 块级盒子是一种参与块级[格式化上下文](https://www.w3.org/TR/CSS22/visuren.html#block-formatting)的盒子.
+源文档中的块级元素会按照 "块" 进行视觉格式化(例如 段落). 同时它也是一种生成块级主盒子的元素. `display` 的某些属性值可以让一个元素变成 "块级" 例如 `block` `list-item` 和 `table` . 块级盒子是一种参与块级[格式化上下文](https://www.w3.org/TR/CSS22/visuren.html#block-formatting)的盒子.
 
-在 css2.2 中, 一个块级盒子同样也是块容器除非他是一个表格盒或者是可替换元素的主盒. 块容器盒要么只包含块级盒子要么建立一个
+在 css2.2 中, 一个块级盒子同样也是块容器盒子除非他是一个表格盒或者是可替换元素的主盒. 块容器盒要么只包含块级盒子要么建立一个行内格式化上下文它只能包含行内级盒子. 一个主盒是一个块容器盒子的元素是一个块容器元素. `display` 属性的某些值可以让非替换元素生成块容器, 例如 `block` `list-item` 和 `inline-block`. 并非所有的块容器盒子都是块级盒子: 非替换行内块和非替换单元格同样是块容器但不属于 "块级". 既是块级盒子又是块容器的情况被叫做 "块盒子".
+
+在没有歧义的地方 "块级盒子" "块容器盒子" 和 "块盒子" 这三个术语被简称为 "块".
+
+#### 匿名块盒子
+
+| 术语                | 对照翻译   |
+| ------------------- | ---------- |
+| Anonymous block box | 匿名块盒子 |
+| in-flow             | 在文档流   |
+| inline box          | 行内盒子   |
+
+
+
+在文档中像这样的:
+
+```
+<DIV>
+  Some text
+  <P>More text
+</DIV>
+```
+
+(假设: DIV 和 P 为 `display:block`), DIV 看起来像同时拥有行内内容和块级内容. 为了容易在格式化中定义, 我们假设这里存在了一个围绕着文本的匿名块盒子.
+
+![diagram showing the three boxes for the example above](https://www.w3.org/TR/CSS22/images/anon-block.png)
+
+换句话说: 如果一个块容器(就上上方 DIV 所生成的一样)中包含了一个块级盒子(就像上方的 P 一样), 那么就会强制改块容器只包含块级盒子.
+
+当行内盒包含一个在文档流中的块级盒子的时候, 行内盒子(以及同一个行框的祖先)会围绕着块级盒子(和任何块级连着的或者因空白而折叠导致脱离文档流的以及脱离文档流的兄弟元素)断开, 行内盒子的拆分会形成两个盒子(即使某一边完全是空的), 块级盒子的每一侧都会有一个. 中断前和中断后的行框被封装在匿名块盒中，块级框盒子为这些匿名盒子的兄弟盒子。
+
+**注意**: 这里 "同一行框的祖先" 指的是一个宽度不足一行且被包裹在行框中的行内盒子中存在块级盒子的情况.
