@@ -314,6 +314,43 @@ The visual formatting model does not specify all aspects of formatting (e.g., it
 
 换句话说: 如果一个块容器(就上上方 DIV 所生成的一样)中包含了一个块级盒子(就像上方的 P 一样), 那么就会强制改块容器只包含块级盒子.
 
-当行内盒包含一个在文档流中的块级盒子的时候, 行内盒子(以及同一个行框的祖先)会围绕着块级盒子(和任何块级连着的或者因空白而折叠导致脱离文档流的以及脱离文档流的兄弟元素)断开, 行内盒子的拆分会形成两个盒子(即使某一边完全是空的), 块级盒子的每一侧都会有一个. 中断前和中断后的行框被封装在匿名块盒中，块级框盒子为这些匿名盒子的兄弟盒子。
+当行内盒包含一个在文档流中的块级盒子的时候, 行内盒子(以及同一个行框的祖先)会围绕着块级盒子(和任何块级连着的或者因空白而折叠导致脱离文档流的以及脱离文档流的兄弟元素)断开, 行内盒子的拆分会形成两个盒子(即使某一边完全是空的), 块级盒子的每一侧都会有一个. 中断前和中断后的行框被包裹在匿名块盒中，块级框盒子成为这些匿名盒子的兄弟盒子. 当行盒收到相对定位的影响的时候, 同样会影响着行盒内部的块级盒子.
 
-**注意**: 这里 "同一行框的祖先" 指的是一个宽度不足一行且被包裹在行框中的行内盒子中存在块级盒子的情况.
+**译者注**: 这里 "同一行框的祖先" 可能指的是一个宽度不足一行且被包裹在行框中的行内盒子中存在块级盒子的情况.
+
+如果遵循上述规则的话上述模型适用于下面的例子:
+
+```
+p    { display: inline }
+span { display: block }
+```
+
+与这个 HTML 文档搭配使用:
+
+```
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HEAD>
+<TITLE>Anonymous text interrupted by a block</TITLE>
+</HEAD>
+<BODY>
+<P>
+This is anonymous text before the SPAN.
+<SPAN>This is the content of SPAN.</SPAN>
+This is anonymous text after the SPAN.
+</P>
+</BODY>
+```
+
+**译者注**: [在线例子](https://jsbin.com/fuyoqalequ/edit?output)
+
+P 元素内部包含匿名文本块 (C1) 和随后的块级元素以及随后的另外的匿名文本块 (C2). 最终的结果盒子相当于 BODY, 包含一个围绕着 C1 的匿名块盒子, SPAN 块盒子, 和另外一个围绕着 C2 的匿名块盒子.
+
+The properties of anonymous boxes are inherited from the enclosing non-anonymous box (e.g., in the example just below the subsection heading "Anonymous block boxes", the one for DIV).  Non-inherited properties have their initial value. For example, the font of the anonymous box is inherited from the DIV, but the margins will be 0.
+
+匿名盒子的属性继承自包裹着它的非匿名盒子(例如, 上面例子中的
+
+Properties set on elements that cause anonymous block boxes to be  generated still apply to the boxes and content of that element. For  example, if a border had been set on the P element in the above  example, the border would be drawn around C1 (open at the end of the  line) and C2 (open at the start of the line).
+
+Some user agents have implemented borders on inlines containing  blocks in other ways, e.g., by wrapping such nested blocks inside  "anonymous line boxes" and thus drawing inline borders around such  boxes. As CSS1 and CSS2 did not define this behavior, CSS1-only and  CSS2-only user agents may implement this alternative model and still  claim conformance to this part of CSS 2.2. This does not apply to UAs  developed after this specification was released.
+
+Anonymous block boxes are ignored when resolving percentage values that would refer to it: the closest non-anonymous ancestor box is used instead. For example, if the child of the anonymous block box inside the DIV above needs to know the height of its containing block to resolve a percentage height, then it will use the height of the containing block formed by the DIV, not of the anonymous block box.
