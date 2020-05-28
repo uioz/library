@@ -228,7 +228,7 @@ The three terms "block-level box," "block container box," and "block box" are so
 
 CSS2.2 是 CSS2 规范中的最新标准, 在 Level3 规范中这部分并没有进行大量修改, 依然沿用 CSS2 的标准.
 
-另外标准中的东西太多了, 这里只挑重要的翻译没有必要和 MDN 重复的部分这里就不在翻译了.
+另外标准中的东西太多了, 这里只挑重要的翻译不重要或者和 MDN 重复的部分这里就不翻译了.
 
 ## 简介
 
@@ -258,6 +258,8 @@ The visual formatting model does not specify all aspects of formatting (e.g., it
 每一个盒子的位置都是与它的包含块有关, 但是不会被其限制; 它可以溢出到包含块之外.
 
 有关包含块的尺寸如何计算的[细节](https://www.w3.org/TR/CSS22/visudet.html#containing-block-details)请移步[下一章](https://www.w3.org/TR/CSS22/visudet.html).
+
+**译者注**: 包含块可以看我的[另外一篇](https://github.com/uioz/library/blob/master/article/%E5%8C%85%E5%90%AB%E5%9D%97(containing%20block).md)翻译.
 
 ## 控制盒子的生成
 
@@ -345,12 +347,63 @@ This is anonymous text after the SPAN.
 
 P 元素内部包含匿名文本块 (C1) 和随后的块级元素以及随后的另外的匿名文本块 (C2). 最终的结果盒子相当于 BODY, 包含一个围绕着 C1 的匿名块盒子, SPAN 块盒子, 和另外一个围绕着 C2 的匿名块盒子.
 
-The properties of anonymous boxes are inherited from the enclosing non-anonymous box (e.g., in the example just below the subsection heading "Anonymous block boxes", the one for DIV).  Non-inherited properties have their initial value. For example, the font of the anonymous box is inherited from the DIV, but the margins will be 0.
+匿名盒子的属性继承自包裹着它的非匿名盒子(例如, 上面例子中的 DIV). 不能继承的属性则使用初始值. 例如, 匿名盒子的字体继承自 DIV 但外边距使用默认值 0.
 
-匿名盒子的属性继承自包裹着它的非匿名盒子(例如, 上面例子中的
+匿名块盒子生成盒子的元素上设置的属性依然会被应用到改盒子和该元素的内容上. 例如, 上例中的 P 元素如果被设置了边框, 边框会围绕着 C1(开口向行尾) 和 C2 (开口朝行头) 绘制.
 
-Properties set on elements that cause anonymous block boxes to be  generated still apply to the boxes and content of that element. For  example, if a border had been set on the P element in the above  example, the border would be drawn around C1 (open at the end of the  line) and C2 (open at the start of the line).
+**译者注**: 为了更好的理解, 这里附一张图:
+![image-20200528160625155](./assets\image-20200528160625155.png)
 
 Some user agents have implemented borders on inlines containing  blocks in other ways, e.g., by wrapping such nested blocks inside  "anonymous line boxes" and thus drawing inline borders around such  boxes. As CSS1 and CSS2 did not define this behavior, CSS1-only and  CSS2-only user agents may implement this alternative model and still  claim conformance to this part of CSS 2.2. This does not apply to UAs  developed after this specification was released.
 
-Anonymous block boxes are ignored when resolving percentage values that would refer to it: the closest non-anonymous ancestor box is used instead. For example, if the child of the anonymous block box inside the DIV above needs to know the height of its containing block to resolve a percentage height, then it will use the height of the containing block formed by the DIV, not of the anonymous block box.
+当解析百分比值的时候, 匿名块盒子会被忽略: 改为使用最近的非匿名祖先盒子. 例如, 如果上方含有匿名块盒子的 DIV 需要使用它的包含块的高度去计算百分比高度时, 它会使用由 DIV 形成的包含块的高度, 不包含匿名块盒子的高度.
+
+### 行内级元素和行内盒子
+
+| 术语                      | 对照翻译         |
+| ------------------------- | ---------------- |
+| Inline-level element      | 行内级元素       |
+| inline box                | 行内盒子         |
+| inline-level box          | 行内级盒子       |
+| inline formatting context | 行内格式化上下文 |
+| atomic inline-level box   | 原子行内级盒子   |
+
+行内级元素是源文档中不构成新内容块的元素; 内容在行中分布(例如, 段落中的强调文本, 行内的图片之类的). 下面的 `display` 属性可以让元素成为行内级 `inline` `inline-table` `inline-block`. 行内级元素生成行内级盒子它可以参与行内格式化上下文.
+
+行内盒子时不仅是行内级盒子而且它的内容参与其自身包含的行内格式化上下文.  一个使用了 `display:inline` 的非替换元素会生成行内盒子. 不是行内盒子的行内级盒子(例如, 行内级替换元素, inline-block 元素, inline-table 元素)被称为原子行内级盒子, 因为它们使用一个不透明框去参与它的行内格式化上下文.
+
+#### 匿名行内盒子
+
+任何直接包含在块容器元素(不是行内元素)必须视为匿名行内元素.
+
+在一个 HTML 标记的文档中就像这样:
+
+```
+<p>Some <em>emphasized</em> text</p>
+```
+
+`<p>` 生成了一个块盒子, 里面由几个行内盒子. 用于表示强调的盒子是行内盒子通过行内元素 (<em>) 生成. 但是另外的盒子 ("some" 和 "text") 是由块级元素 (`<p>`) 生成的行内盒子. 后者被称为匿名行内盒子, 因为它没有与之相关联的行内级元素.
+
+这种匿名行内盒子从其父块盒子继承可继承属性. 非继承属性使用初始值. 在这个例子中, 颜色会继承自 P, 但是背景颜色使用的是透明值.
+
+**译者注**: 背景颜色无法继承.
+
+随后根据'white-space'属性折叠起来的空白内容不会生成任何匿名行内盒子.
+
+如果上下文很明确, 在本规范中匿名块盒子和匿名行内盒子都会被称为匿名盒子.
+
+当格式化[表格](https://www.w3.org/TR/CSS22/tables.html#anonymous-boxes)的时候会生成更多类型的匿名盒子.
+
+### 总结
+
+元素可以生成盒子, 盒子不是元素.
+
+块容器盒子用于容纳 块级盒子 或者建立 行内格式化上下文, 因此块容器中一旦出现 行内盒子(包括匿名文本) 就会构建行内格式化上下文,  但其中存在的块级盒子会打破按照行排列的规则.
+
+容器约束内部的内容, 块级盒子和行内级盒子约束外部的表现.
+
+块容器盒子有点类似行内盒子, 都需要满足格各自的两种条件. 都像是容器, 其内部有独特的规则.
+
+## 普通流
+
+// TODO: 继续等等吧, 东西太多了
