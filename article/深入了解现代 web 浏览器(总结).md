@@ -292,3 +292,12 @@ window.addEventListener('pointermove', event => {
 
 > https://www.html5rocks.com/zh/tutorials/internals/howbrowserswork/#The_browsers_we_will_talk_about
 
+# 个人总结
+
+最顶级的浏览器进程负责多个进程的通信.
+
+chrome 尽可能的为每一个标签页建立一个进程, 为了域隔离现在每一个 iframe 都会建立一个进程(如果可能的话)
+
+标签页单独分为一个进程的好处是某标签页奔溃后不会影响全局, 另外一个好处是提供进程隔离更加安全.
+
+chrome 的进程结构会根据硬件进行调整, 主要体现在将浏览器进程拆分为多个独立的进程 UI进程 存储进程 网络进程.
