@@ -113,3 +113,11 @@ If-Modify-Since 则是浏览器在访问这个资源的时候被写入请求头�
 这点可以通过开发者工具的 network 面板来进行检查.
 
 但是勾选了开发者工具中的禁用缓存(disable cache)以及通过使用 ctrl+f5 强制刷新则浏览器不会使用任何缓存, 全部重新请求资源.
+
+# 参考
+
+> https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ
+>
+> https://developers.google.com/web/fundamentals/performance/get-started/httpcaching-6
+>
+> https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching#
