@@ -406,6 +406,20 @@ Some user agents have implemented borders on inlines containing  blocks in other
 
 ## 普通流
 
+### 块级格式化上下文
+
+浮动, 绝对定位元素, 不是块盒子的块容器(inline-blocks, table-cells, and table-captions), 和 `overflow` 不是 `visible` 属性的情况, 会为他们的内容建立一个新的块级格式化上下文.
+
+在块级格式化上下文中, 盒子被一个接着一个的垂直摆放, 从包含块的顶部开始. 两个挨着的盒子之间的距离由 `margin` 属性控制. 两个相邻的块级盒子之间的垂直 `margin` 会在格式化上下文中塌陷.
+
+在块级格式化上下文中, 每个盒子的左外边缘与包含块的左边缘相接触. 即使盒子中存在浮动的情况下也依然成立(虽然盒子的行盒可能会因为浮动而收缩), 除非这个盒子也建立一个新的块级格式化上下文(在这种情况下这个盒子会变窄因为里面的浮动元素).
+
+For information about page breaks in paged media, please consult the section on [allowed page breaks](https://www.w3.org/TR/CSS22/page.html#allowed-page-breaks).
+
+> 为什么 BFC 可以阻止 margin 塌陷, 文档已经说明了这一点
+>
+> 为什么 BFC 可以阻止 float 的溢出, A float is a box 所以 BFC 必须包住它.  must not overlap the margin box of any floats in the same block formatting context as the element itself 规定了浮动元素不可以和 margin 重叠.
+
 // TODO: 继续等等吧, 东西太多了
 
 // TODO: 行盒的规范 https://www.w3.org/TR/css-text-3/#bidi-linebox
