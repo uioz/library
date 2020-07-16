@@ -121,7 +121,7 @@ console.log('hello' in obj) // print what?
 console.log(obj.hello) // print what?
 ```
 
-```
+```javascript
 var objOne = {
 	a:2
 }
@@ -138,6 +138,46 @@ console.log(objTwo.a); // print what?
 
 console.log(objTwo.hasOwnProperty("a")); // print what?
 ```
+
+# 模拟 call 的实现
+
+```javascript
+Function.prototype.call2 = function (context) {
+
+  if(context == null){
+    context = window;
+  }
+
+  var args = [];
+  var argLengths = arguments.length;
+  var index = 0;
+  while (index < argLengths) {
+    args.push('arguments[' + index + ']');
+    index++;
+  }
+
+  context.__call2 = this;
+  //                                       此处的 args.toString() 自动返回 "arg1,arg2,arg3" 的格式
+  const result = eval('context.__call2(' + args + ')'); 
+  delete context.__call2;
+  return result;
+};
+
+const obj = {
+  name: "test",
+};
+
+function foobar() {
+  console.log(this);
+}
+
+foobar.call2(obj);
+
+```
+
+# 模拟 bind 的实现
+
+
 
 `**Object.preventExtensions()**`
 
