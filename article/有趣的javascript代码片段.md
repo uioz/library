@@ -177,6 +177,47 @@ foobar.call2(obj);
 
 # 模拟 bind 的实现
 
+```javascript
+Function.prototype.bind2 = function(context) {
+
+	var that = this;
+	var args = Array.prototype.slice.call(arguments, 1);
+
+	function handler() {
+
+		return that.apply(
+			this instanceof handler ? this : context,
+			args.concat(
+				Array.prototype.slice.call(arguments)
+			)
+		)
+
+	}
+
+	handler.prototype = Object.create(that.prototype);
+
+	return handler
+
+}
+
+function test() {
+	this.a = 10;
+	console.log(this)
+}
+
+var obj = {
+	name: 'obj'
+}
+
+test.bind2(obj)()
+```
+
+## 模拟 new 的实现
+
+```javascript
+
+```
+
 
 
 `**Object.preventExtensions()**`
