@@ -215,7 +215,21 @@ test.bind2(obj)()
 ## 模拟 new 的实现
 
 ```javascript
+function objectFactory(constructor) {
 
+	var obj = Object.create(constructor.prototype);
+
+	var instance = constructor.apply(obj,Array.prototype.slice.call(arguments,1))
+
+	return typeof instance === 'object' ? instance || obj : obj;
+}
+
+function test(name,age){
+	this.name = name;
+	this.age = age;
+}
+
+console.log(objectFactory(test,'hello world',23))
 ```
 
 
