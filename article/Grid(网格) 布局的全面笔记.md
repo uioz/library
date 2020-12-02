@@ -295,6 +295,18 @@ grid-auto-rows: minmax(100px, 200px);
 grid-auto-rows: minmax(100px, auto);
 ```
 
+#### 使用 repeat 和 minmax 来创建通用模式
+
+repeat 提供了两个关键字 `auto-fill` 和 `auto-fit` 来配合 minmax 来创建一种 "最大数量的模式", 请看下面的例子:
+
+````css
+grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+````
+
+minmax 试图创建一个容器最小宽度为 `200px` 多余的空间基于 `1fr` 分配的情景.
+
+而 `repeat` 结合 `auto-fill` 则会尽可能多的在网格容器中填入列. 只要容器宽度合适, 这种方式会试图填入尽可能多的 `200px` 宽的子元素, 如果容器不能容纳, 剩余空间使用 `1fr` 进行分配.
+
 # 新的关键字
 
 - flex
