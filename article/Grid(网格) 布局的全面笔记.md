@@ -932,6 +932,53 @@ grid-template-columns: 1fr [content-start] 1fr [content-end] 1fr;
 
 结果在末尾定义的 content 却跑到了中间, 不仅仅是为其定义了 `grid-area:content;` 而且我们为这个区域定义了完整的命名线, 相当于隐式的为一个网格单元进行了命名.
 
+# 对齐系统
+
+我们早已经熟悉了 flex 布局中的对齐系统, 而 Grid 布局的对齐系统和 flex 布局系统有意的被设计成一致的用法.
+
+回想看看在 flex 布局中在只有一个横轴上横向对齐, 我们会在 flex 容器上编写 `justify-content` 来对齐内容, 如果我们想让某个元素在横轴上手动调整--那是不可能的, 稍后我们会提到如何独立调整元素在横向的位置:
+
+```html
+<div><img><button></button></div>
+```
+
+```css
+div{
+    display:flex;
+    justify-content:center;
+}
+```
+
+如果在一行上我们想要调整 flex 布局希望元素垂直居中我们使用 `align-items` 来进行设置:
+
+```css
+div{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+```
+
+横向对齐我们用的是 `content` 纵向对齐我们用的是 `items` 为什么呢, `content` 对齐的是整体, flex 布局是允许多行存在的, 我们假设 `<img>` 宽度充满了 flex 容器导致 `<button>` 被移动到了下一行, 现在我们想要让 `<img>` 和 `<button>` 相对整个容器居中, 使用 `align-items` 会导致这两个元素在各自的行上垂直居中, 而使用 `align-content` 则可以让其整体垂直居中:
+
+```html
+<div><img style="display:block;width:100%"><button></button></div>
+```
+
+```css
+div{
+    display:flex;
+    flex-wrap:wrap; // flex 默认不换行
+    align-content:center; // 整体相对于容器本身垂直居中
+}
+```
+
+如果按照这样的规律 `justify-content` 应该也存在才对, 是的 `justify-content` 的确存在, 但是该属性不在 flex 布局中起作用.
+
+因为想要使用 `justify-content` 那么必须存在很多列而 flex 布局出现列是基于 `flex-direction` 来设定的将 "主轴" 使用列来充当, 此时存在的多个列如果要相对于容器居中对齐还是使用 `align-content` 即可. 所以 `justify-content` 没有存在的必要.
+
+
+
 # 进一步阅读
 
 ## 网格单元的自动定位
