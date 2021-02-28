@@ -138,12 +138,12 @@ npm publish
 ## 作用域模块的特点
 
 1. 不同作用域下的模块可以重名
-2. 可以为 registry 配置指定的作用域
-3. 模块名称格式如下 `@作用域/模块名称`
+2. 可以为 registry 关联作用域
+3. 作用域专用的模块名 `@作用域/模块名称`
 
 如果我们存在多个团队, 不同团队内部拥有自己的私有 npm 托管, 如果需要模块互相借用, 可能会出现模块名称冲突的问题. 利用作用域模块我们可以将修改模块命名为 `@团队名称/模块名称` 或者 `@项目名称/模块名称`.
 
-另外将 `registry` 与作用域模块关联后对于公开模块的下载, 流量就不会经过 `verdaccio` 当然这是不需要使用 `verdaccio` 缓存的情况下, 这些内容我们后面的章节会提到.
+另外将 `registry` 与作用域模块关联后, 对于公开模块(不被 `verdaccio` 管理的模块)的下载, 流量就不会经过 `verdaccio` 当然这是不需要使用 `verdaccio` 缓存的情况下, 这些内容我们后面的章节会提到.
 
 ## 两种设置作用域的方式
 
@@ -158,7 +158,7 @@ npm init --scope <scope name>
 2. 登陆 registry 并为其配置作用域和地址
 
 ```
-npm adduser --registry=<registry> --scope=@<scope name>
+npm adduser --registry=<registry> --scope=<scope name>
 ```
 
 当下载和推送模块的时候只要作用域匹配, 那么会下载和推送到该 `registry` 上去.
@@ -264,9 +264,9 @@ packages:
 '$all', '$anonymous', '@all', '@anonymous', 'all', 'undefined', 'anonymous', $authenticated
 ```
 
-- $all 表示全部用户
-- $anonymous 排除登陆用户
-- $authenticated 表示登陆用户
+- `$all` 表示全部用户
+- `$anonymous` 排除登陆用户
+- `$authenticated` 表示登陆用户
 
 已注册用户名可以用于权限控制, 通过这种方式可以进行更加精细的操作:
 
