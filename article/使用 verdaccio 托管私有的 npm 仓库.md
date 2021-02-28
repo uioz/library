@@ -13,7 +13,7 @@
 - 我想组织团队间的代码
   - 通过 `npm cli` 的提供的 scoped 功能或者通过 [verdaccio](https://verdaccio.org/docs/en/configuration) 的权限控制你都可以轻松的协调和组织不同项目间的模块
 - 我想对模块添加权限访问控制
-  - 当然没有问题, 你可以通过模块名称分配权限, 通过用户名称分配权限, 或者给每一个用户单独分配权限.
+  - 当然没有问题, 你可以控制模块的访问 推送 和 移除三大权限, 通过用户名称的形式
 
 最后 [verdaccio](https://verdaccio.org/docs/en/configuration) 还会提供一个 GUI 虽然功能没有像 `npmjs.org` 那样强大, 但是提供了最最实用的功能.
 
