@@ -1,10 +1,10 @@
 # 前言
 
-[verdaccio](https://verdaccio.org/docs/en/configuration) 是一款开源用于私有 `npm` 仓库的工具, 简单来说你可以用它来搭建一个自己的 `npm` 仓库, 可以实现所  `https://npmjs.org/` 提供的功能.
+[verdaccio](https://verdaccio.org/docs/en/configuration) 是一款开源用于创建私有 `registry` 的工具, 简单来说你可以用它来搭建一个自己的 `npm` 仓库, 可以实现绝大部分 `npm` 所提供的能力.
 
-[verdaccio](https://verdaccio.org/docs/en/configuration) 基于 `node` 对于前端开发人员来说获取 [verdaccio](https://verdaccio.org/docs/en/configuration) 这款工具就像喝水一样简单.
+[verdaccio](https://verdaccio.org/docs/en/configuration) 基于 `node` 开发, 对于前端开发人员来说获取 [verdaccio](https://verdaccio.org/docs/en/configuration) 这款工具就像喝水一样简单.
 
-工具的诞生往往是根据需求而出现的, so 你为什么需要一个私有的 `npm`  仓库呢? 好吧, 当你想要分享你的模块时候, 你可能会有如下的想法.
+工具的诞生往往是根据需求而出现的, 当你想要分享你的模块时候, 你可能会有如下的想法.
 
 - 我希望我的内部模块不会对外公开
   - [verdaccio](https://verdaccio.org/docs/en/configuration) 就是为局部托管而生, 这是它的本职工作
@@ -29,7 +29,7 @@ npm install -g verdaccio
 yarn global add verdaccio
 ```
 
-如果你没有特殊需求, 直接通过全局安装. 想要了解安装前置要求? 为了本篇文章的简洁请移步[官方文档](https://verdaccio.org/docs/en/installation#prerequisites)
+如果你没有特殊需求, 直接通过全局安装. 想要了解安装前置要求, 或者其他安装方式? 为了本篇文章的简洁请移步[官方文档](https://verdaccio.org/docs/en/installation#prerequisites)
 
 ## 启动 [verdaccio](https://verdaccio.org/docs/en/configuration) 
 
@@ -40,8 +40,6 @@ verdaccio
 ```
 
 🎇你已经有了自己的私有仓库, 怎样是不是很简单.
-
-![image-20210222231042100](./assets\image-20210222231042100.png)
 
 当然不传入和任何参数的情况下 `verdaccio` 会使用默认的配置, 当然我们也可以手动的为其指定配置文件.
 
@@ -258,17 +256,169 @@ packages:
 
 除了 `access` `publish` 和 `proxy` 还有一个 `storage` 选项用于控制匹配模块的相对于存储目录的路径.
 
-提供了一系列的权限组
-
 说实话我对这些权限组概念无法理解, 为了不带来错误的信息, 这里只给出具体的用法, 想要深入了解的可以去看官方文档.
 
+可用的内置权限组如下:
 
+```
+'$all', '$anonymous', '@all', '@anonymous', 'all', 'undefined', 'anonymous', $authenticated
+```
+
+- $all 表示全部用户
+- $anonymous 排除登陆用户
+- $authenticated 表示登陆用户
+
+已注册用户名可以用于权限控制, 通过这种方式可以进行更加精细的操作:
+
+```yaml
+packages:
+  'npmuser-*':
+    access: npmuser
+    publish: npmuser
+```
+
+上面这份配置只要符合 `npmuser-*` 规则的模块, 只有账号为 `npmuser` 的用户才拥有权限.
 
 # 用户控制
 
-# 模块缓存
+## 设置多个用户组
 
-# npm 拓展
+```yaml
+  'company-*':
+    access: admin internal
+    publish: admin
+    proxy: server1
+  'supersecret-*':
+    access: secret super-secret-area ultra-secret-area
+    publish: secret ultra-secret-area
+    proxy: server1
+```
 
-## team
+## 禁用一组模块
 
+```yaml
+packages:
+  'old-*':
+  # 不定义 access 和 publish 即可
+  '**':
+    access: $all
+    publish: $authenticated
+```
+
+## 禁止模块代理到其他 registry
+
+**注意**: `proxy`  的用法在下一节描述
+
+```yaml
+packages:
+  'jquery':
+    access: $all
+    publish: $all
+    unpublish: root
+  'my-company-*':
+    access: $all
+    publish: $authenticated
+    unpublish:
+  '@my-local-scope/*':
+    access: $all
+    publish: $authenticated
+    # unpublish: property commented out
+  '**':
+    access: $all
+    publish: $authenticated
+    proxy: npmjs
+```
+
+这份配置有如下的目的:
+
+1. 允许任何人读取和托送保存在本地的 `jquery` 模块, 但是只有 `root` 用户才可以移除它
+2. `my-company-*` 模块只允许所有人访问, 只有登陆后的才可以推送, 但是不允许移除这个模块
+3. `@my-local-scope/*` 模块允许所有人访问, 只有登陆后的人才可以推送, 推送的人有权限移除它
+4. 其他的模块允许所有人访问, 只有登陆后才可以推送
+
+## 批量创建账号密码
+
+我自己并没有尝试批量创建用户, 但是这是可行的. 默认的访问控制基于 [htpasswd](https://github.com/verdaccio/monorepo/tree/9.x/plugins/htpasswd) 注册的用户被保存到了 `htpasswd` 文件中. 这个文件和配置文件保存在同一个目录中.
+
+打开该文件后你可以看到如下的文本, 这些是我通过 `verdaccio` 登陆后所创建的, 基本上就是 用户名 + 密码哈希 +    创建类型 + 日期, 其中只有账号和密码哈希是必要的.
+
+```
+admin:Veu47j6NfSujQ:autocreated 2021-02-05T08:08:22.684Z
+example:x01Ba3hJe4d2c:autocreated 2021-02-24T15:13:27.132Z
+teama:GV.PRNbm5rgi6:autocreated 2021-02-24T15:59:20.618Z
+```
+
+`htpasswd` 仓库简单的介绍了这个文件:
+
+> The htpasswd file contains rows corresponding to a pair of username and password separated with a colon character. The password is encrypted using the UNIX system's crypt method and may use MD5 or SHA1.
+
+另外你可以用这个网站(需翻墙)来在线创建.
+
+> https://hostingcanada.org/htpasswd-generator/
+
+但是想要批量创建可能需要写个脚本.
+
+# 模块代理与缓存
+
+## 模块代理
+
+如果全局 `registry` 设置为了 `verdaccio` 如果我们下载一个不存在于 `verdaccio` 上的模块, `verdaccio` 会读取上一级的 `registry` 默认就是 `https://registry.npmjs.org/`.
+
+在配置文件中我们可以通过 `uplinks` 声明多个上游:
+
+```yaml
+uplinks:
+  npmjs:
+   url: https://registry.npmjs.org/
+  server2:
+    url: http://mirror.local.net/
+    timeout: 100ms
+  server3:
+    url: http://mirror2.local.net:9000/
+  uplink1:
+    url: http://localhost:55666/
+```
+
+声明好的上游用于 `packages.proxy` 选项:
+
+```yaml
+packages:
+  '@scope/*':
+    access: $all
+    publish: $all
+    proxy: server2
+  'private-*':
+    access: $all
+    publish: $all
+    proxy: uplink1
+  '**':
+    access: $all
+    publish: $all
+    proxy: npmjs
+```
+
+上面这份配置中如果符合模块名称匹配规则的模块不存在本地服务上对于:
+
+- `@scope/*` 会向 `server2` 也就是 `http://mirror.local.net/` 查询
+- `private-*` 会向 `uplink1` 也就是 `http://localhost:55666/` 查询
+- 其他的模块则会向 `npmjs` 也就是 `https://registry.npmjs.org/` 查询
+
+当然默认的 `npmjs` 可以指向 `https://registry.npm.taobao.org` 对于国内的网络环境更加友好.
+
+## 模块缓存
+
+`verdaccio` 默认会缓存上游下载下的模块, 这是十分有意义的, 一般来说重复下载同一个模块的几率要比下载一个新的模块几率高得多.
+
+有关缓存的配置项目不多, 主要集中在 `uplinks` 选项上:
+
+```
+uplinks:
+  npmjs:
+   # 表示是否开启缓存
+   cache:true
+   # 表示缓存多久后失效
+   maxage:10m
+   url: https://registry.npmjs.org/
+```
+
+> 官方文档地址 https://verdaccio.org/docs/en/what-is-verdaccio
