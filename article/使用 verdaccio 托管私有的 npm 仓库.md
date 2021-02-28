@@ -139,12 +139,13 @@ npm publish
 
 ## 作用域模块的特点
 
-作用域模块有两个最大的优势:
-
 1. 不同作用域下的模块可以重名
 2. 可以为 registry 配置指定的作用域
+3. 模块名称格式如下 `@作用域/模块名称`
 
-如果我们存在多个团队, 不同团队内部拥有自己的私有 npm 托管, 如果需要模块互相借用, 可能会出现模块名称冲突的问题.
+如果我们存在多个团队, 不同团队内部拥有自己的私有 npm 托管, 如果需要模块互相借用, 可能会出现模块名称冲突的问题. 利用作用域模块我们可以将修改模块命名为 `@团队名称/模块名称` 或者 `@项目名称/模块名称`.
+
+另外将 `registry` 与作用域模块关联后对于公开模块的下载, 流量就不会经过 `verdaccio` 当然这是不需要使用 `verdaccio` 缓存的情况下, 这些内容我们后面的章节会提到.
 
 ## 两种设置作用域的方式
 
@@ -156,33 +157,118 @@ npm publish
 npm init --scope <scope name>
 ```
 
-2. 登陆用户到指定的 registry 且配置作用域
+2. 登陆 registry 并为其配置作用域和地址
 
 ```
 npm adduser --registry=<registry> --scope=@<scope name>
 ```
 
-这样该 `registry` 下的模块就会被添加了一个作用域, 不会和当前的 registry 冲突.
+当下载和推送模块的时候只要作用域匹配, 那么会下载和推送到该 `registry` 上去.
 
+实践一下, 我们现在重置 npm 到初始状态:
 
+```
+// 重置默认 registry
+npm set registry https://registry.npmjs.org/
+
+// 取消登陆状态
+npm logout
+```
+
+进入到项目目录通过为其创建一个 `example` 作用域:
+
+```
+// 该命令会重写当前的 package.json, 同时也是交互式命令, 一路回车即可
+npm init --scope example
+```
+
+然后登陆到 `http://localhost:4873` 同时指定作用域:
+
+```
+// 第二次登陆如果用的是之前的账号, 密码则必须和之前一样
+npm adduser --registry=http://localhost:4873 --scope=example
+```
+
+然后推送模块:
+
+```
+npm publish
+```
+
+在继续之前这里涉猎一些一些 `npm` 与 [verdaccio](https://verdaccio.org/docs/en/configuration) 在包访问控制上的一些区别, 一个作用域模块默认不会被公开基本等同于作者可见, 也就是 `npm` 在模块上添加了访问控制.
+
+但是 [verdaccio](https://verdaccio.org/docs/en/configuration) 去掉了有关访问控制的符合 `npm` 的实现, 基于 `npm access` 的命令无法使用, 配置模块访问则需要修改配置文件.
+
+如果你希望你的 `npm` 模块可见在推送时候可以指定如下的命令:
+
+```
+npm publish --access=public
+```
+
+如果这个模块已经被提交则需要使用来修改:
+
+```
+npm access public
+```
+
+> https://docs.npmjs.com/cli/v7/commands/npm-access#details
+
+回到 [verdaccio](https://verdaccio.org/docs/en/configuration) 这边, 默认的配置中任何人都可以访问作用域模块, 所以进入到 GUI 你就可以看到这个模块了:
+
+![image-20210228182100438](./assets\image-20210228182100438.png)
+
+配置文件的使用方式在后面的章节中会介绍.
+
+好了通过下列命令就可以从我们指定的 `registry` 上安装我们的作用域模块:
+
+```
+npm install @example/verdaccio-example
+```
+
+试想一下如果存在多个开发项目组, 如果所有的模块都基于 `@项目名称/模块` 名称的形式, 不同项目间的引用模块将会轻松的多.
 
 # 配置文件入门
 
-# 包访问控制
+## 简介
+
+之前我们已经提交如何寻找默认配置文件的位置, 这里不在赘述.
+
+[官方文档-配置文件](https://verdaccio.org/docs/en/configuration)
+
+`verdaccio` 的配置文件并不复杂, 本章节只会挑重点介绍, 否则就成为翻译文档了, 所以不要忘记去文档中浏览其他的功能配置.
+
+# 设置模块
+
+默认配置文件的包访问控制如下:
+
+```yaml
+packages:
+  # 可以使用通配符来匹配包名, 这个条件匹配的是作用域模块
+  '@*/*':
+    # 访问权限, 基本等用于是否可以被搜索到
+    access: $all
+    # 托送权限
+    publish: $authenticated
+    # 代理配置, 在模块缓存一节中会介绍
+    proxy: npmjs
+  # 这个条件匹配所有模块
+  '**':
+    proxy: npmjs
+```
+
+除了 `access` `publish` 和 `proxy` 还有一个 `storage` 选项用于控制匹配模块的相对于存储目录的路径.
+
+提供了一系列的权限组
+
+说实话我对这些权限组概念无法理解, 为了不带来错误的信息, 这里只给出具体的用法, 想要深入了解的可以去看官方文档.
+
+
 
 # 用户控制
 
 # 模块缓存
 
 # npm 拓展
-
-对于哪些没有使用过 `npm` 进阶功能的人来说下面的几个概念是很实用的.
-
-## registry
-
-## 登入/登出
-
-## scoped(作用域)
 
 ## team
 
