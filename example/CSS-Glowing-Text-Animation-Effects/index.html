@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="refer to https://www.youtube.com/watch?v=asv8uirb2R8">
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Bad+Script&display=swap");
+      body {
+        margin: 0;
+        display: grid;
+        place-items: center;
+        height: 100vh;
+        font-family: "Bad Script", cursive;
+        background: #111;
+      }
+
+      h2 {
+        display: flex;
+        font-size: 15vw;
+        color: transparent;
+        contain: layout;
+      }
+
+      span {
+        animation: animate 3s linear infinite;
+        animation-delay: calc(0.1s * var(--i));
+        will-change: contents;
+      }
+
+      @keyframes animate {
+        0% {
+          color: #fff;
+          filter: blur(2px) hue-rotate(0deg);
+          text-shadow: 0 0 10px #00b3ff, 0 0 20px #00b3ff, 0 0 40px #00b3ff,
+            0 0 80px #00b3ff, 0 0 120px #00b3ff, 0 0 200px #00b3ff,
+            0 0 400px #00b3ff;
+        }
+        30%,
+        70% {
+          color: #fff;
+          filter: blur(2px) hue-rotate(360deg);
+          text-shadow: 0 0 10px #00b3ff, 0 0 20px #00b3ff, 0 0 40px #00b3ff,
+            0 0 80px #00b3ff, 0 0 120px #00b3ff;
+        }
+        100% {
+          color: transparent;
+          text-shadow: 0 0 0 transparent;
+          filter: blur(2px) hue-rotate(0deg);
+        }
+      }
+    </style>
+    <title>Document</title>
+  </head>
+  <body>
+    <h2>
+      <span style="--i: 1">h</span>
+      <span style="--i: 2">e</span>
+      <span style="--i: 3">l</span>
+      <span style="--i: 4">l</span>
+      <span style="--i: 5">o</span>
+      <span style="--i: 6; margin-left: 0.5em">w</span>
+      <span style="--i: 7">o</span>
+      <span style="--i: 8">r</span>
+      <span style="--i: 9">l</span>
+      <span style="--i: 10">d</span>
+      <span style="--i: 11">!</span>
+    </h2>
+  </body>
+</html>
